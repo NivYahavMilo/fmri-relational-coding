@@ -1,7 +1,6 @@
 import os
 import pickle
 
-# TODO: refactor this class
 import numpy as np
 
 import config
@@ -25,13 +24,13 @@ class Roi2Networks:
         ranges = cls.networks_indices[net]
         range1, range2 = ranges
         pkl_data[net.name] = np.concatenate((
-                data[net.name][:, range1.start:range1.stop, :],
-                data[net.name][:, range2.start:range2.stop, :]),
+            data[net.name][:, range1.start:range1.stop, :],
+            data[net.name][:, range2.start:range2.stop, :]),
             axis=1)
 
-        with open('data//networks_ts//' + 'DMN.pkl', 'wb') as f:
+        data_path = os.path.join(config.DATA_CENTER)
+        with open(data_path, 'wb') as f:
             pickle.dump(pkl_data, f)
-
 
     @staticmethod
     def load_raw_data():
@@ -50,3 +49,4 @@ class Roi2Networks:
                 continue
             cls.slice_network_roi(data=fmri_data, net=network)
 
+# todo: check this code

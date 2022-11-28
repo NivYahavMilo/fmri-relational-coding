@@ -2,6 +2,7 @@ import os
 
 ROOT_PATH = os.path.abspath(os.path.curdir)
 DATA_CENTER = os.path.join(ROOT_PATH, 'data_center')
+MAPPING_FILES = os.path.join(ROOT_PATH, 'data_center', 'mappings')
 
 RAW_DATA_TASK = os.path.join(r'E:', 'S1200', '7T_task')
 RAW_DATA_REST = os.path.join(r'E:', 'S1200', '7T_rest')

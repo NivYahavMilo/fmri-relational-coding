@@ -1,4 +1,5 @@
 import os
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -56,3 +57,14 @@ def _get_clip_labels(timing_file, k_runs: int = 4):
             jj += 1
 
     return clip_y
+
+
+def _dict_to_pkl(data: dict, file_name: str):
+    with open(f'{file_name}.pkl', 'wb') as handle:
+        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def _load_pkl(file_name: str):
+    file = open(file_name, 'rb')
+    object_file = pickle.load(file)
+    return object_file
