@@ -2,9 +2,8 @@ from enum import Enum
 
 
 class Mode(Enum):
-    CLIPS = 'clips'
-    REST_BETWEEN = 'rest_between'
-    COMBINED = 'combined'
+    CLIPS = 'TASK'
+    REST = 'REST'
 
 
 class Network(Enum):

@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 
 import config
-from data_normalizer.utils import _get_clip_labels
+from data_normalizer.utils import _get_clip_labels, _info
+from enums import Mode
 
 
 def _clip_class_df(data, subject, clip_y, k_runs, timing_file):
@@ -18,9 +19,7 @@ def _clip_class_df(data, subject, clip_y, k_runs, timing_file):
     idx = np.ones(config.GRAYORIDNATES).astype(bool)
     for k_run in range(k_runs):
 
-        print('loading run %d/%d' % (k_run + 1, k_runs))
         run_name = 'MOVIE%d' % (k_run + 1)  # MOVIEx_7T_yz
-
         # timing file for run
         timing_df = timing_file[
             timing_file['run'].str.contains(run_name)]
@@ -51,18 +50,21 @@ def _clip_class_df(data, subject, clip_y, k_runs, timing_file):
     return table
 
 
-def run():
-    timing_file = pd.read_csv(os.path.join(config.DATA_DRIVE_E, 'videoclip_tr_lookup.csv'))
+def run(mode: Mode):
+    timing_file = pd.read_csv(os.path.join(config.TIMING_FILES, f'{mode.value}_TIMING_FILE.csv'))
     clip_y = _get_clip_labels(timing_file)
 
-    subjects_dir = os.path.join(config.VOXEL_DATA)
+    subjects_dir = config.VOXEL_DATA
 
     for sub in os.listdir(subjects_dir):
         sub_id = sub.replace('.pkl', '')[-6:]
+
         load_path = (os.path.join(config.VOXEL_DATA,
                                   fr'data_MOVIE_runs_voxel_{config.GRAYORIDNATES}_ts_subject_{sub_id}.pkl'))
 
-        output_path = os.path.join(config.VOXEL_DATA_DF, f"4_RUNS_VOXEL_LEVEL_SUBJECT_{sub_id}.pkl")
+        output_path = os.path.join(config.VOXEL_DATA_DF.format(mode=mode.value),
+                                   f"4_RUNS_VOXEL_LEVEL_SUBJECT_{sub_id}.pkl")
+
         if not os.path.isfile(output_path):
             with open(load_path, 'rb') as f:
                 data = pickle.load(f)
@@ -72,10 +74,13 @@ def run():
 
             df = pd.DataFrame(sub_data)
             df['Subject'] = df['Subject'].astype(int)
-            df.to_pickle()
+
+            df.to_pickle(os.path.join(config.VOXEL_DATA_DF.format(mode=mode.value),
+                                      f"4_RUNS_VOXEL_LEVEL_SUBJECT_{sub_id}.pkl"))
             del df, sub_data, data
-            print(sub_id, "saved")
+            _info(sub_id)
 
 
 if __name__ == '__main__':
-    run()
+    extraction_mode = Mode.CLIPS
+    run(mode=extraction_mode)
