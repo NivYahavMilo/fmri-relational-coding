@@ -16,7 +16,7 @@ class StaticData:
         load json file
         set class attr
         """
-        f = open('data.json')
+        f = open('static_data.json')
         data = json.load(f)
 
         for attr, values in data.items():

@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class Mode(Enum):
@@ -20,3 +20,9 @@ class Network(Enum):
 class DataType(Enum):
     FMRI = 'fMRI'
     ACTIVATIONS = 'LSTM PATTERNS'
+
+class FlowType(Enum):
+    ROI_TO_NETWORK = auto()
+    VOXEL_TO_ROI = auto()
+    RAW_TO_TABULAR = auto()
+    RELATIONAL_CODING = auto()
