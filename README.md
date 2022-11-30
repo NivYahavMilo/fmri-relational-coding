@@ -1,2 +1,6 @@
 # fmri_relational_coding
-an analysis of time series fMRI data
+
+This repository contains data manipultaion on the Human Connectome Project (HCP) data.
+
+Includes statistical analysis of fMRI brain signals on different level degree (Voxel, ROI, Network).
+
