@@ -34,6 +34,7 @@ class Roi2Networks:
 
     @staticmethod
     def load_raw_data():
+        #todo: change path to E drive
         data_path = os.path.join(config.DATA_CENTER, 'raw_data')
         file_name = os.listdir(data_path)[0]
         with open(file_name, 'r') as f:
@@ -45,8 +46,7 @@ class Roi2Networks:
     def flow(cls):
         fmri_data = cls.load_raw_data()
         for network in Network:
-            if network == Network.WB:
-                continue
-            cls.slice_network_roi(data=fmri_data, net=network)
+            if not network == Network.WB:
+                cls.slice_network_roi(data=fmri_data, net=network)
 
 # todo: check this code

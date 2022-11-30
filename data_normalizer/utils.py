@@ -14,11 +14,12 @@ def _info(s: str):
 
 
 def _get_parcel(roi, net=7):
-    '''
+    """
+    load voxel and networks mapping according to parcel file
     return:
     parcel: grayordinate -> ROI map
     nw_info: subnetwork tags for each ROI
-    '''
+    """
     parcel_path = os.path.join(config.DATA_DRIVE_E, 'cifti',
                                'Schaefer2018_%dParcels_%dNetworks_order.csv' % (roi, net))
 
@@ -33,10 +34,10 @@ def _get_parcel(roi, net=7):
 
 
 def _get_clip_labels(timing_file, k_runs: int = 4):
-    '''
+    """
     assign all clips within runs a label
     use 0 for testretest
-    '''
+    """
 
     clips = []
     for run in range(k_runs):

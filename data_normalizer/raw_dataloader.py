@@ -5,7 +5,6 @@ collect participants' runs into data cell
 3. save subject tag
 '''
 import numpy as np
-import pandas as pd
 import nibabel as nib
 import argparse
 import os
