@@ -1,7 +1,4 @@
-torch
-scikit-learn
 numpy
 pandas
-scipy
-sklearn
 matplotlib
+nibabel
