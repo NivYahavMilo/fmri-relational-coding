@@ -12,24 +12,24 @@ from relational_coding.fmri_relationl_coding import FmriRelationalCoding
 class FlowManager:
 
     @classmethod
-    def step_map_voxel_to_roi(cls, *args):
+    def _step_map_voxel_to_roi(cls, *args):
         mode: Mode = args[0]
         voxel_to_roi = Voxel2Roi(mode=mode)
         voxel_to_roi.flow()
 
     @classmethod
-    def step_preprocess_raw_data_to_tabular(cls, *args):
+    def _step_preprocess_raw_data_to_tabular(cls, *args):
         mode: Mode = args[0]
         raw_data_parcel = ParcelData()
         raw_data_parcel.run(mode, k_roi=300, k_net=7)
 
     @classmethod
-    def step_preprocess_roi_to_networks(cls, *args):
+    def _step_preprocess_roi_to_networks(cls, *args):
         roi_to_network = Roi2Networks()
         roi_to_network.flow()
 
     @classmethod
-    def step_relational_coding(cls, *args):
+    def _step_relational_coding(cls, *args):
         relation_coding_type: DataType = args[0]
         roi_name: str = args[1]
 
@@ -48,12 +48,17 @@ class FlowManager:
         flow_type: FlowType = kwargs['flow_type']
 
         flow_type_mapping = {
-            FlowType.ROI_TO_NETWORK: cls.step_preprocess_roi_to_networks,
-            FlowType.RAW_TO_TABULAR: cls.step_preprocess_raw_data_to_tabular,
-            FlowType.VOXEL_TO_ROI: cls.step_map_voxel_to_roi,
-            FlowType.RELATIONAL_CODING: cls.step_relational_coding
+            FlowType.ROI_TO_NETWORK: cls._step_preprocess_roi_to_networks,
+            FlowType.RAW_TO_TABULAR: cls._step_preprocess_raw_data_to_tabular,
+            FlowType.VOXEL_TO_ROI: cls._step_map_voxel_to_roi,
+            FlowType.RELATIONAL_CODING: cls._step_relational_coding
 
         }
 
         func_flow: Callable = flow_type_mapping.get(flow_type)
         func_flow(*args)
+
+
+if __name__ == '__main__':
+    fm = FlowManager()
+    fm.execute(DataType.FMRI, 'LH_Default_pCunPCC_5', flow_type=FlowType.RELATIONAL_CODING)

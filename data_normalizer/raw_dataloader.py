@@ -12,7 +12,7 @@ import pickle
 
 import config
 from enums import Mode
-from utils import _info, _get_parcel
+from data_normalizer.utils import _info, _get_parcel
 
 class ParcelData:
 

@@ -1,13 +1,16 @@
 import json
+import os
 from typing import List, Optional
 
+import config
 
 ROI_NAMES = []
 SUBJECTS = ['100610',
             '102311']
 
+
 class StaticData:
-    ROI_NAMES:Optional[List]
+    ROI_NAMES: Optional[List]
     SUBJECTS: Optional[List]
 
     @classmethod
@@ -16,8 +19,9 @@ class StaticData:
         load json file
         set class attr
         """
-        f = open('static_data.json')
-        data = json.load(f)
+        data_path = os.path.join(config.STATIC_DATA_PATH, 'static_data.json')
+        io = open(data_path)
+        data = json.load(io)
 
         for attr, values in data.items():
             setattr(cls, attr, values)

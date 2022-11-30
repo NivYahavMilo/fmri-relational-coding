@@ -2,7 +2,7 @@ import os
 import pickle
 
 import config
-import data_center.static_data.static_data as st_data
+from data_center.static_data.static_data import StaticData
 from enums import Mode
 from abc import abstractmethod
 
@@ -17,8 +17,9 @@ class RelationalCodingBase:
         """
         pass
 
-    def yield_subject_iterator(self):
-        pass
+    @staticmethod
+    def yield_subject_iterator():
+        yield StaticData.SUBJECTS
 
     def load_roi_data(self, roi_name: str, subject: str):
         self._check_roi_validity(roi_name)
@@ -32,9 +33,7 @@ class RelationalCodingBase:
 
         return roi_data_df
 
-
-
     @staticmethod
     def _check_roi_validity(roi_name: str):
-        if roi_name not in st_data.ROI_NAMES:
-            raise ValueError("ROI name incorrect", "\n","check the following list:","\n", st_data.ROI_NAMES)
+        if roi_name not in StaticData.ROI_NAMES:
+            raise ValueError("ROI name incorrect\n","check the following list:\n", StaticData.ROI_NAMES)

@@ -2,6 +2,7 @@ import os
 
 ROOT_PATH = os.path.abspath(os.path.curdir)
 DATA_CENTER = os.path.join(ROOT_PATH, 'data_center')
+STATIC_DATA_PATH = os.path.join(ROOT_PATH, 'data_center', 'static_data')
 MAPPING_FILES = os.path.join(ROOT_PATH, 'data_center', 'mappings')
 TIMING_FILES = os.path.join(ROOT_PATH, 'data_center', 'timing_files')
 RAW_DATA = os.path.join(r'E:', 'S1200', '7T_{mode}')
