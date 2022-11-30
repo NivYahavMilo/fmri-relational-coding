@@ -87,11 +87,3 @@ class Voxel2Roi:
     def flow(self):
         self.load_voxel_mapping_file(roi=300, nw=7)
         self.load_data_per_subject()
-
-
-if __name__ == '__main__':
-    v2r = Voxel2Roi(mode=Mode.REST)
-    v2r.flow()
-    del v2r
-    v2r = Voxel2Roi(mode=Mode.CLIPS)
-    v2r.flow()
