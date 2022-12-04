@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 import config
-from data_normalizer.utils import _get_clip_labels, _info
+import data_normalizer.utils as utils
 from enums import Mode
 
 class VoxelExtraction:
@@ -54,7 +54,7 @@ class VoxelExtraction:
     @classmethod
     def run(cls, mode: Mode):
         timing_file = pd.read_csv(os.path.join(config.TIMING_FILES, f'{mode.value}_TIMING_FILE.csv'))
-        clip_y = _get_clip_labels(timing_file)
+        clip_y = utils.get_clip_labels(timing_file)
 
         subjects_dir = config.VOXEL_DATA
 
@@ -80,4 +80,4 @@ class VoxelExtraction:
                 df.to_pickle(os.path.join(config.VOXEL_DATA_DF.format(mode=mode.value),
                                           f"4_RUNS_VOXEL_LEVEL_SUBJECT_{sub_id}.pkl"))
                 del df, sub_data, data
-                _info(sub_id)
+                utils.info(sub_id)

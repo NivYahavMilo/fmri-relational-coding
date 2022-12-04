@@ -12,7 +12,7 @@ import pickle
 
 import config
 from enums import Mode
-from data_normalizer.utils import _info, _get_parcel
+import data_normalizer.utils as utils
 
 class ParcelData:
 
@@ -66,7 +66,7 @@ class ParcelData:
         net = kwargs['k_net']
 
         # load parcellation file
-        parcel, nw_info = _get_parcel(roi, net)
+        parcel, nw_info = utils.get_parcel(roi, net)
 
         # use glob to get all files with `ext`
         ext = '*MSMAll_hp2000_clean.dtseries.nii'
@@ -80,7 +80,7 @@ class ParcelData:
             ID = file.split('\\MNINonLinear')[0][-6:]
             participants.add(ID)
         participants = np.sort(list(participants))
-        _info('Number of participants = %d' % len(participants))
+        utils.info('Number of participants = %d' % len(participants))
 
 
         for ii, ID in enumerate(participants):
@@ -89,7 +89,7 @@ class ParcelData:
             data = {}
             # if individual has all 4 runs
             if len(ID_files) == 4:
-                _info('%s: %d/%d' % (ID, (ii + 1), len(participants)))
+                utils.info('%s: %d/%d' % (ID, (ii + 1), len(participants)))
                 ID_ts, t = [], []
                 for path in ID_files:
                     roi_ts = cls._get_roi_ts(path, parcel)
@@ -120,5 +120,5 @@ class ParcelData:
                 del data, save_ts
 
             else:
-                _info('%s not processed' % ID)
+                utils.info('%s not processed' % ID)
 

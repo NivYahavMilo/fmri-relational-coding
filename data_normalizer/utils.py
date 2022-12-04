@@ -7,13 +7,13 @@ import pandas as pd
 import config
 
 
-def _info(s: str):
+def info(s: str):
     print('-' * 10)
     print(s)
     print('-' * 10)
 
 
-def _get_parcel(roi, net=7):
+def get_parcel(roi, net=7):
     """
     load voxel and networks mapping according to parcel file
     return:
@@ -33,7 +33,7 @@ def _get_parcel(roi, net=7):
     return parcel, nw_info
 
 
-def _get_clip_labels(timing_file, k_runs: int = 4):
+def get_clip_labels(timing_file, k_runs: int = 4):
     """
     assign all clips within runs a label
     use 0 for testretest
@@ -60,12 +60,12 @@ def _get_clip_labels(timing_file, k_runs: int = 4):
     return clip_y
 
 
-def _dict_to_pkl(data: dict, file_name: str):
+def dict_to_pkl(data: dict, file_name: str):
     with open(f'{file_name}.pkl', 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def _load_pkl(file_name: str):
+def load_pkl(file_name: str):
     file = open(file_name, 'rb')
     object_file = pickle.load(file)
     return object_file

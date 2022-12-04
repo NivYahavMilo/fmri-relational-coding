@@ -4,7 +4,7 @@ import pandas as pd
 
 import config
 from arithmetic_operations.matrix_op import MatrixOperations
-from data_normalizer.utils import _dict_to_pkl
+import data_normalizer.utils as utils
 from enums import Mode
 from relational_coding.relational_coding_base import RelationalCodingBase
 
@@ -65,5 +65,5 @@ class FmriRelationalCoding(RelationalCodingBase):
             self.relation_coding.clear()
 
         save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS, roi)
-        _dict_to_pkl(data, save_path)
+        utils.dict_to_pkl(data, save_path)
         print(f'Saved roi {roi}')

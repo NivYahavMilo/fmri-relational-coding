@@ -5,7 +5,7 @@ from typing import Optional
 import pandas as pd
 
 import config
-from data_normalizer.utils import _load_pkl, _info
+import data_normalizer.utils as utils
 from enums import Mode
 
 
@@ -76,13 +76,13 @@ class Voxel2Roi:
         for sub_file in subjects_voxel_data:
             # slice string for subject id
             sub_id = sub_file.split('.pkl')[0][-6:]
-            sub_data = _load_pkl(sub_file)
+            sub_data = utils.load_pkl(sub_file)
             # get all region of interest names list
             ROIS = self.network_mapping['ROI Name'].unique()
             for r in ROIS:
                 roi_data = self._get_voxels_by_roi(data=sub_data, roi=r)
                 self._save_roi_file(data=roi_data, roi_name=r, subject=sub_id)
-            _info(f"Subject {sub_id} saved")
+            utils.info(f"Subject {sub_id} saved")
 
     def flow(self):
         self.load_voxel_mapping_file(roi=300, nw=7)
