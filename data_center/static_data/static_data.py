@@ -1,6 +1,6 @@
 import json
 import os
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import config
 
@@ -12,6 +12,9 @@ SUBJECTS = ['100610',
 class StaticData:
     ROI_NAMES: Optional[List]
     SUBJECTS: Optional[List]
+    CLIPS_ORDER: Optional[List]
+    REST_ORDER: Optional[List]
+    CLIP_MAPPING: Optional[Dict]
 
     @classmethod
     def inhabit_class_members(cls):

@@ -11,6 +11,9 @@ from relational_coding.fmri_relationl_coding import FmriRelationalCoding
 
 class FlowManager:
 
+    # load dictionary to static class members
+    StaticData.inhabit_class_members()
+
     @classmethod
     def _step_map_voxel_to_roi(cls, *args):
         mode: Mode = args[0]
@@ -20,8 +23,10 @@ class FlowManager:
     @classmethod
     def _step_preprocess_raw_data_to_tabular(cls, *args):
         mode: Mode = args[0]
+        roi: int = args[1]
+        net: int = args[2]
         raw_data_parcel = ParcelData()
-        raw_data_parcel.run(mode, k_roi=300, k_net=7)
+        raw_data_parcel.run(mode, k_roi=roi, k_net=net)
 
     @classmethod
     def _step_preprocess_roi_to_networks(cls, *args):
@@ -42,8 +47,6 @@ class FlowManager:
 
     @classmethod
     def execute(cls, *args, **kwargs):
-        # load dictionary to static class members
-        StaticData.inhabit_class_members()
 
         flow_type: FlowType = kwargs['flow_type']
 
@@ -57,8 +60,3 @@ class FlowManager:
 
         func_flow: Callable = flow_type_mapping.get(flow_type)
         func_flow(*args)
-
-
-if __name__ == '__main__':
-    fm = FlowManager()
-    fm.execute(DataType.FMRI, 'LH_Default_pCunPCC_5', flow_type=FlowType.RELATIONAL_CODING)

@@ -11,6 +11,8 @@ VOXEL_DATA = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL')
 VOXEL_DATA_DF = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_{mode}_DF')
 SUBNET_DATA_DF = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_{mode}_DF')
 
+FMRI_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding')
+
 K_GRAYORIDNATES = 59412
 
 NETWORK_MAPPING_TEMPLATE_FILE = r'Schaefer2018_{roi}Parcels_{nw}Networks_order_FSLMNI152_{mm}mm.Centroid_RAS.csv'
