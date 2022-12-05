@@ -11,9 +11,6 @@ from relational_coding.relational_coding_base import RelationalCodingBase
 
 class FmriRelationalCoding(RelationalCodingBase):
 
-    def __init__(self):
-        self.relation_coding = {}
-
     def correlate_current_timepoint(self, data, timepoint):
         df = pd.DataFrame.from_dict(data, orient='columns')
         df = self.rearrange_clip_order(df)
@@ -31,7 +28,7 @@ class FmriRelationalCoding(RelationalCodingBase):
 
         tr_corr = general_corr.corr()
         distance = round(tr_corr.loc['task'].at['rest'], 3)
-        self.relation_coding[timepoint] = distance
+        return distance
 
     def get_clip_vectors(self, rest_data, task_data, timepoint):
         tr_vec = {}
@@ -50,6 +47,7 @@ class FmriRelationalCoding(RelationalCodingBase):
 
         data = {}
         for sub_id in self.yield_subject_generator():
+            sub_rc_dis = []
             roi_sub_data_task = self.load_roi_data(roi_name=roi, subject=sub_id, mode=Mode.CLIPS)
             roi_sub_data_rest = self.load_roi_data(roi_name=roi, subject=sub_id, mode=Mode.REST)
 
@@ -59,10 +57,10 @@ class FmriRelationalCoding(RelationalCodingBase):
                     task_data=roi_sub_data_task,
                     timepoint=tr)
 
-                self.correlate_current_timepoint(data=timepoint_clip_matrix, timepoint=tr)
+                rc_distance = self.correlate_current_timepoint(data=timepoint_clip_matrix, timepoint=tr)
+                sub_rc_dis.append(rc_distance)
 
-            data[sub_id] = self.relation_coding
-            self.relation_coding.clear()
+            data[sub_id] = sub_rc_dis
 
         save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS, roi)
         utils.dict_to_pkl(data, save_path)
