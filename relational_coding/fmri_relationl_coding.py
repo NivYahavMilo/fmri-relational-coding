@@ -3,8 +3,8 @@ import os.path
 import pandas as pd
 
 import config
-from arithmetic_operations.matrix_op import MatrixOperations
 import data_normalizer.utils as utils
+from arithmetic_operations.matrix_op import MatrixOperations
 from enums import Mode
 from relational_coding.relational_coding_base import RelationalCodingBase
 
@@ -44,6 +44,9 @@ class FmriRelationalCoding(RelationalCodingBase):
         return tr_vec
 
     def run(self, roi):
+        save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS, f"{roi}.pkl")
+        if os.path.isfile(save_path):
+            return
 
         data = {}
         for sub_id in self.yield_subject_generator():
@@ -61,7 +64,5 @@ class FmriRelationalCoding(RelationalCodingBase):
                 sub_rc_dis.append(rc_distance)
 
             data[sub_id] = sub_rc_dis
-
-        save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS, roi)
-        utils.dict_to_pkl(data, save_path)
+        utils.dict_to_pkl(data, save_path.replace('.pkl',''))
         print(f'Saved roi {roi}')

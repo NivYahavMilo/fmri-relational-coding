@@ -34,7 +34,7 @@ def plot_pipe(roi):
     rc_mat = gather_subjects_results(roi)
     rc_stats = {}
     rc_stats['mean'] = np.mean(rc_mat, axis=0)
-    rc_stats['std'] = np.std(rc_mat, axis=0)
+    rc_stats['std'] = np.std(rc_mat, axis=0,ddof=1) // np.sqrt(rc_mat.shape[0])
     plot_error_bar(rc_stats, roi)
 
 def plot_pipe_single_subject(roi, subject):
@@ -46,7 +46,3 @@ def plot_pipe_single_subject(roi, subject):
     plt.xlabel("Rest TR")
     plt.ylabel("Correlation Value")
     plt.show()
-
-if __name__ == '__main__':
-    plot_pipe(roi="LH_Default_Temp_4")
-    #plot_pipe_single_subject("RH_Default_pCunPCC_3", "100610")
