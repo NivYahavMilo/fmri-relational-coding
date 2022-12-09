@@ -37,13 +37,14 @@ class FlowManager:
     def _step_relational_coding(cls, *args):
         relation_coding_type: DataType = args[0]
         roi_name: str = args[1]
+        avg_flag: bool = args[2]
 
         relational_coding_mapping = {
             DataType.FMRI: FmriRelationalCoding,
             DataType.ACTIVATIONS: ActivationsRelationalCoding
         }
         relation_coding = relational_coding_mapping.get(relation_coding_type)()
-        relation_coding.run(roi=roi_name)
+        relation_coding.run(roi=roi_name, avg_data=avg_flag)
 
     @classmethod
     def execute(cls, *args, **kwargs):

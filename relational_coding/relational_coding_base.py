@@ -46,14 +46,22 @@ class RelationalCodingBase:
 
     def load_roi_data(self, roi_name: str, subject: str, mode: Mode):
         self._check_roi_validity(roi_name)
-
+        # if pass validity checks
         data_path = config.SUBNET_DATA_DF.format(mode=mode.value)
-        roi_data_p = os.path.join(data_path, subject, roi_name + '.pkl')
+        roi_data_p = os.path.join(data_path, subject, f"{roi_name}.pkl")
         roi_data = open(roi_data_p, 'rb')
         roi_data_df = pickle.load(roi_data)
         # release IO object from memory
         del roi_data
 
+        return roi_data_df
+
+    def load_avg_data(self,roi_name: str, mode: Mode):
+        self._check_roi_validity(roi_name)
+        # if pass validity checks
+        data_path = config.SUBNET_DATA_AVG.format(mode=mode.value)
+        roi_data_p = os.path.join(data_path, f"{roi_name}.pkl")
+        roi_data_df = pd.read_pickle(roi_data_p)
         return roi_data_df
 
     @staticmethod

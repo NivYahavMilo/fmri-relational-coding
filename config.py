@@ -10,8 +10,11 @@ DATA_DRIVE_E = os.path.join(r'E:', 'parcelled_data_niv')
 VOXEL_DATA = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL')
 VOXEL_DATA_DF = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_{mode}_DF')
 SUBNET_DATA_DF = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_{mode}_DF')
+SUBNET_DATA_AVG = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_AVG_{mode}')
 
 FMRI_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding')
+FMRI_RELATION_CODING_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'relational_coding_avg')
+FMRI_RELATION_CODING_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'figures')
 
 K_GRAYORIDNATES = 59412
 
