@@ -7,22 +7,21 @@ import data_normalizer.utils as utils
 from data_center.static_data.static_data import StaticData
 
 
-def plot_error_bar(data, roi):
-    plt.errorbar([*range(19)],
-                 data['mean'],
-                 data['std']
-                 )
-
-    plt.title(f"Mean and Standard deviation of {roi}")
+def plot_error_bar(data, roi, group, save_img):
+    plt.errorbar([*range(19)],data)
+    plt.title(f"Mean and Standard deviation of {roi} {group}")
     plt.xlabel("Rest TR")
     plt.ylabel("Correlation Value")
-
+    fig1 = plt.gcf()
     plt.show()
+    plt.draw()
+    fig1.savefig(save_img, dpi=100)
 
-def plot_pipe_avg(roi_name):
-    res_path = config.FMRI_RELATION_CODING_RESULTS_AVG
+def plot_pipe_avg(roi_name, group:str = ''):
+    res_path = config.FMRI_RELATION_CODING_RESULTS_AVG.format(group=group.lower())
     data = utils.load_pkl(f"{res_path}\\{roi_name}.pkl")
-    plot_error_bar(data['avg'], roi_name)
+    save_img = fr"{config.FMRI_RELATION_CODING_RESULTS_FIGURES.format(group=group)}\\{roi_name}.png"
+    plot_error_bar(data['avg'], roi_name, group, save_img)
 
 def gather_subjects_results(roi_name):
     res_path = config.FMRI_RELATION_CODING_RESULTS
@@ -109,4 +108,5 @@ def plot_reg_and_avg_on_top():
 
 
 if __name__ == '__main__':
-    plot_reg_and_avg_on_top()
+    plot_pipe_avg()
+    #plot_reg_and_avg_on_top()

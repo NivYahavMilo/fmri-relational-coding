@@ -1,5 +1,4 @@
 import os
-import pickle
 from abc import abstractmethod
 
 import pandas as pd
@@ -30,7 +29,7 @@ class RelationalCodingBase:
         sequence = data[(data['timepoint'] == timepoint) &
                         (data['y'] == clip_i)]
 
-        sequence = sequence.drop(['Subject', 'y', 'timepoint'], axis=1)
+        sequence = sequence.drop(['y', 'timepoint'], axis=1)
 
         return sequence.values[0].tolist()
 
@@ -49,17 +48,13 @@ class RelationalCodingBase:
         # if pass validity checks
         data_path = config.SUBNET_DATA_DF.format(mode=mode.value)
         roi_data_p = os.path.join(data_path, subject, f"{roi_name}.pkl")
-        roi_data = open(roi_data_p, 'rb')
-        roi_data_df = pickle.load(roi_data)
-        # release IO object from memory
-        del roi_data
-
+        roi_data_df = pd.read_pickle(roi_data_p)
         return roi_data_df
 
-    def load_avg_data(self,roi_name: str, mode: Mode):
+    def load_avg_data(self, roi_name: str, mode: Mode, group: int):
         self._check_roi_validity(roi_name)
         # if pass validity checks
-        data_path = config.SUBNET_DATA_AVG.format(mode=mode.value)
+        data_path = config.SUBNET_DATA_AVG.format(mode=mode.value, group=group)
         roi_data_p = os.path.join(data_path, f"{roi_name}.pkl")
         roi_data_df = pd.read_pickle(roi_data_p)
         return roi_data_df
@@ -70,7 +65,7 @@ class RelationalCodingBase:
             raise ValueError("ROI name incorrect\n", "check the following list:\n", StaticData.ROI_NAMES)
 
     @abstractmethod
-    def run(self, roi: str):
+    def run(self, roi: str, avg_data: bool, group: str):
         """
         run relational coding flow.
         """

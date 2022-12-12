@@ -57,10 +57,10 @@ class FmriRelationalCoding(RelationalCodingBase):
             sub_rc_corr.append(corr_df)
         return sub_rc_dis, sub_rc_corr
 
-    def avg_data_flow(self, roi, res_path):
+    def avg_data_flow(self, roi, res_path, group):
         data = {}
-        roi_avg_task = self.load_avg_data(roi_name=roi, mode=Mode.CLIPS)
-        roi_avg_rest = self.load_avg_data(roi_name=roi, mode=Mode.REST)
+        roi_avg_task = self.load_avg_data(roi_name=roi, mode=Mode.CLIPS, group=group)
+        roi_avg_rest = self.load_avg_data(roi_name=roi, mode=Mode.REST, group=group)
         sub_rc_dis,df_corr = self.relation_distance(d_rest=roi_avg_rest, d_task=roi_avg_task)
         # store results in subject id key
         data['avg'] = sub_rc_dis
@@ -82,12 +82,12 @@ class FmriRelationalCoding(RelationalCodingBase):
         utils.dict_to_pkl(data, res_path.replace('.pkl', ''))
         print(f'Saved roi {roi}')
 
-    def run(self, roi, avg_data: bool = False):
+    def run(self, roi, avg_data: bool = False, group: str = ''):
         if avg_data:
-            save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS_AVG, f"{roi}.pkl")
+            save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS_AVG.format(group=group.lower()), f"{roi}.pkl")
             if os.path.isfile(save_path):
                 return
-            self.avg_data_flow(roi, save_path)
+            self.avg_data_flow(roi, save_path, group)
         else:
             save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS, f"{roi}.pkl")
             if os.path.isfile(save_path):

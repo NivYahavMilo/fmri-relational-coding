@@ -21,13 +21,19 @@ def _load(sub, roi, mode):
     return roi_data_df
 
 def get_subjects_average_roi_matrix():
+    mid_i = len(StaticData.SUBJECTS) // 2
+    group1 = StaticData.SUBJECTS[:mid_i]
+    group2 = StaticData.SUBJECTS[mid_i:]
+
     for roi in StaticData.ROI_NAMES:
-        save_path_rest = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.REST.value), f'{roi}')
-        save_path_task = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.CLIPS.value), f'{roi}')
+        save_path_rest = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.REST.value,
+                                                                    group='_GROUP2'), f'{roi}')
+        save_path_task = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.CLIPS.value,
+                                                                    group='_GROUP2'), f'{roi}')
         task = []
         rest = []
         drop = ['timepoint', 'Subject', 'y']
-        for sub_id in StaticData.SUBJECTS:
+        for sub_id in group2:
 
             roi_sub_data_task = _load(roi=roi, sub=sub_id, mode=Mode.CLIPS)
             roi_sub_data_rest = _load(roi=roi, sub=sub_id, mode=Mode.REST)
@@ -36,7 +42,6 @@ def get_subjects_average_roi_matrix():
             task.append(roi_sub_data_task_d.values)
             rest.append(roi_sub_data_rest_d.values)
 
-            continue
         rest_avg = pd.DataFrame(MatrixOperations.get_avg_matrix(rest))
         task_avg = pd.DataFrame(MatrixOperations.get_avg_matrix(task))
 
