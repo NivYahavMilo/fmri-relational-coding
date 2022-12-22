@@ -26,3 +26,4 @@ class FlowType(Enum):
     VOXEL_TO_ROI = auto()
     RAW_TO_TABULAR = auto()
     RELATIONAL_CODING = auto()
+    ACTIVATIONS_PATTERNS = auto()

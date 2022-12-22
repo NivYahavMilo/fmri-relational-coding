@@ -12,9 +12,13 @@ VOXEL_DATA_DF = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_{mode}_DF')
 SUBNET_DATA_DF = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_{mode}_DF')
 SUBNET_DATA_AVG = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_AVG_{mode}{group}')
 
-FMRI_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding')
-FMRI_RELATION_CODING_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'relational_coding_avg{group}')
-FMRI_RELATION_CODING_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'figures{group}')
+FMRI_ACTIVATIONS_PATTERN_RESULTS = os.path.join(ROOT_PATH, 'results', 'activations_patterns', 'activations_patterns')
+FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'activations_patterns','activations_patterns{group}')
+FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'activations_patterns', 'activations_patterns_figures{group}')
+
+FMRI_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'relational_coding')
+FMRI_RELATION_CODING_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'relational_coding_avg{group}')
+FMRI_RELATION_CODING_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'figures{group}')
 
 K_GRAYORIDNATES = 59412
 

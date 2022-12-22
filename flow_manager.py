@@ -7,7 +7,8 @@ from data_normalizer.voxel_to_roi import Voxel2Roi
 from enums import Mode, DataType, FlowType
 from relational_coding.artificial_relational_coding import ActivationsRelationalCoding
 from relational_coding.fmri_relationl_coding import FmriRelationalCoding
-
+from activtions_patterns.fmri_activations_pattern import FmriActivationPattern
+from activtions_patterns.artifical_activations_pattern import ArtificialActivationPattern
 
 class FlowManager:
 
@@ -48,6 +49,18 @@ class FlowManager:
         relation_coding.run(roi=roi_name, avg_data=avg_flag, group=group)
 
     @classmethod
+    def _step_activations_pattern(cls, *args):
+        relation_coding_type: DataType = args[0]
+        roi_name: str = args[1]
+        group: str = args[2]
+        relational_coding_mapping = {
+            DataType.FMRI: FmriActivationPattern,
+            DataType.ACTIVATIONS: ArtificialActivationPattern
+        }
+        relation_coding = relational_coding_mapping.get(relation_coding_type)()
+        relation_coding.run(roi=roi_name, group=group)
+
+    @classmethod
     def execute(cls, *args, **kwargs):
 
         flow_type: FlowType = kwargs['flow_type']
@@ -56,7 +69,8 @@ class FlowManager:
             FlowType.ROI_TO_NETWORK: cls._step_preprocess_roi_to_networks,
             FlowType.RAW_TO_TABULAR: cls._step_preprocess_raw_data_to_tabular,
             FlowType.VOXEL_TO_ROI: cls._step_map_voxel_to_roi,
-            FlowType.RELATIONAL_CODING: cls._step_relational_coding
+            FlowType.RELATIONAL_CODING: cls._step_relational_coding,
+            FlowType.ACTIVATIONS_PATTERNS: cls._step_activations_pattern
 
         }
 

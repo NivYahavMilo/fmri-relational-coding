@@ -4,11 +4,6 @@ from typing import List, Optional, Dict
 
 import config
 
-ROI_NAMES = []
-SUBJECTS = ['100610',
-            '102311']
-
-
 class StaticData:
     ROI_NAMES: Optional[List]
     SUBJECTS: Optional[List]

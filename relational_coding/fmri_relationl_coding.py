@@ -52,7 +52,7 @@ class FmriRelationalCoding(RelationalCodingBase):
                 task_data=d_task,
                 timepoint=tr)
 
-            rc_distance,corr_df = self.correlate_current_timepoint(data=timepoint_clip_matrix)
+            rc_distance, corr_df = self.correlate_current_timepoint(data=timepoint_clip_matrix)
             sub_rc_dis.append(rc_distance)
             sub_rc_corr.append(corr_df)
         return sub_rc_dis, sub_rc_corr
@@ -61,7 +61,7 @@ class FmriRelationalCoding(RelationalCodingBase):
         data = {}
         roi_avg_task = self.load_avg_data(roi_name=roi, mode=Mode.CLIPS, group=group)
         roi_avg_rest = self.load_avg_data(roi_name=roi, mode=Mode.REST, group=group)
-        sub_rc_dis,df_corr = self.relation_distance(d_rest=roi_avg_rest, d_task=roi_avg_task)
+        sub_rc_dis, df_corr = self.relation_distance(d_rest=roi_avg_rest, d_task=roi_avg_task)
         # store results in subject id key
         data['avg'] = sub_rc_dis
         data['avg correlation'] = df_corr
@@ -69,13 +69,12 @@ class FmriRelationalCoding(RelationalCodingBase):
         utils.dict_to_pkl(data, res_path.replace('.pkl', ''))
         print(f'Saved roi {roi}')
 
-
     def subject_flow(self, roi, res_path):
         data = {}
         for sub_id in self.yield_subject_generator():
             roi_sub_data_task = self.load_roi_data(roi_name=roi, subject=sub_id, mode=Mode.CLIPS)
             roi_sub_data_rest = self.load_roi_data(roi_name=roi, subject=sub_id, mode=Mode.REST)
-            sub_rc_dis,_ = self.relation_distance(d_rest=roi_sub_data_rest, d_task=roi_sub_data_task)
+            sub_rc_dis, _ = self.relation_distance(d_rest=roi_sub_data_rest, d_task=roi_sub_data_task)
             # store results in subject id key
             data[sub_id] = sub_rc_dis
         # save subject result
