@@ -1,5 +1,7 @@
 from typing import Callable
 
+from activtions_patterns.artifical_activations_pattern import ArtificialActivationPattern
+from activtions_patterns.fmri_activations_pattern import FmriActivationPattern
 from data_center.static_data.static_data import StaticData
 from data_normalizer.raw_dataloader import ParcelData
 from data_normalizer.split_wb_networks import Roi2Networks
@@ -7,11 +9,10 @@ from data_normalizer.voxel_to_roi import Voxel2Roi
 from enums import Mode, DataType, FlowType
 from relational_coding.artificial_relational_coding import ActivationsRelationalCoding
 from relational_coding.fmri_relationl_coding import FmriRelationalCoding
-from activtions_patterns.fmri_activations_pattern import FmriActivationPattern
-from activtions_patterns.artifical_activations_pattern import ArtificialActivationPattern
+from relational_coding.singular_relational_coding import SingularRelationalCoding
+
 
 class FlowManager:
-
     # load dictionary to static class members
     StaticData.inhabit_class_members()
 
@@ -49,6 +50,14 @@ class FlowManager:
         relation_coding.run(roi=roi_name, avg_data=avg_flag, group=group)
 
     @classmethod
+    def _singular_relational_coding(cls, *args):
+        relation_coding_type: DataType = args[0]
+        roi_name: str = args[1]
+        group: str = args[2]
+        src = SingularRelationalCoding()
+        src.run(roi=roi_name, group=group)
+
+    @classmethod
     def _step_activations_pattern(cls, *args):
         relation_coding_type: DataType = args[0]
         roi_name: str = args[1]
@@ -62,7 +71,6 @@ class FlowManager:
 
     @classmethod
     def execute(cls, *args, **kwargs):
-
         flow_type: FlowType = kwargs['flow_type']
 
         flow_type_mapping = {
@@ -70,7 +78,8 @@ class FlowManager:
             FlowType.RAW_TO_TABULAR: cls._step_preprocess_raw_data_to_tabular,
             FlowType.VOXEL_TO_ROI: cls._step_map_voxel_to_roi,
             FlowType.RELATIONAL_CODING: cls._step_relational_coding,
-            FlowType.ACTIVATIONS_PATTERNS: cls._step_activations_pattern
+            FlowType.ACTIVATIONS_PATTERNS: cls._step_activations_pattern,
+            FlowType.SINGULAR_RELATIONAL_CODING: cls._singular_relational_coding
 
         }
 

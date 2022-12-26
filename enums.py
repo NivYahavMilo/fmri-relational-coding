@@ -21,9 +21,11 @@ class DataType(Enum):
     FMRI = 'fMRI'
     ACTIVATIONS = 'LSTM PATTERNS'
 
+
 class FlowType(Enum):
     ROI_TO_NETWORK = auto()
     VOXEL_TO_ROI = auto()
     RAW_TO_TABULAR = auto()
     RELATIONAL_CODING = auto()
     ACTIVATIONS_PATTERNS = auto()
+    SINGULAR_RELATIONAL_CODING = auto()

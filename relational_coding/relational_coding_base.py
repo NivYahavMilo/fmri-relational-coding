@@ -29,7 +29,7 @@ class RelationalCodingBase:
         sequence = data[(data['timepoint'] == timepoint) &
                         (data['y'] == clip_i)]
 
-        sequence = sequence.drop(['y', 'timepoint'], axis=1)
+        sequence = sequence.drop(['Subject', 'y', 'timepoint'], axis=1)
 
         return sequence.values[0].tolist()
 

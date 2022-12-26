@@ -1,7 +1,7 @@
 import os
 
-import matplotlib.pyplot as plt
 import matplotlib.colors as colors
+import matplotlib.pyplot as plt
 import numpy as np
 
 import config
@@ -10,7 +10,7 @@ from data_center.static_data.static_data import StaticData
 
 
 def plot_error_bar(data, roi, group='', save_img=None):
-    plt.errorbar([*range(19)], data)
+    plt.errorbar([*range(19)], data['mean'], data['std'])
     plt.title(f"Mean and Standard deviation of {roi} {group}")
     plt.xlabel("Rest TR")
     plt.ylabel("Correlation Value")
@@ -37,6 +37,7 @@ def gather_subjects_results(roi_name):
         rc_matrix[ii, :] += l
         ii += 1
     return rc_matrix
+
 
 def plot_pipe(roi):
     rc_mat = gather_subjects_results(roi)
@@ -112,15 +113,31 @@ def plot_reg_and_avg_on_top():
         fig1.savefig(save_path, dpi=100)
 
 
+def _get_clip_avg(data, roi, group):
+    avg_data = np.zeros((len(data.keys()), 19))
+    i = 0
+    for clip, act in data.items():
+        avg_data[i, :] += act
+        i += 1
+
+    res = {}
+    res['mean'] = np.mean(avg_data, axis=0)
+    res['std'] = np.std(avg_data, axis=0, ddof=1) // np.sqrt(avg_data.shape[0])
+    plot_error_bar(res, roi, group)
+    return
 
 
-def plot_activation_pattern(roi, group):
+def plot_activation_pattern(roi, group, avg=True):
     avg_path = config.FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG.format(group=group)
     data = utils.load_pkl(f"{avg_path}\\{roi}.pkl")
     clips = {}
     for tr, clip_d in data.items():
         for clip, value in clip_d.items():
             clips.setdefault(clip, []).append(value)
+
+    if avg:
+        _get_clip_avg(clips, roi, group)
+        return
 
     rc = []
     for _seq, _color, n in zip(clips.values(), colors.XKCD_COLORS, clips.keys()):
@@ -154,4 +171,3 @@ def plot_activation_pattern(roi, group):
     # plt.show()
     plt.draw()
     fig1.savefig(save_path, dpi=100)
-

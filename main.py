@@ -36,16 +36,27 @@ def activations_pattern_for_all_roi(group, with_plot: bool = False):
             plot.plot_activation_pattern(roi, group)
 
 
-def activations_pattern_for_specific_roi(roi, with_plot: bool = False):
+def activations_pattern_for_specific_roi(roi, group, with_plot: bool = False):
     fm = FlowManager()
-    fm.execute(DataType.FMRI, roi, flow_type=FlowType.ACTIVATIONS_PATTERNS)
+    fm.execute(DataType.FMRI, roi, group, flow_type=FlowType.ACTIVATIONS_PATTERNS)
     if with_plot:
-        plot.plot_activation_pattern(roi)
+        plot.plot_activation_pattern(roi, group)
 
+
+def singular_relational_coding(group, with_plot: bool = False):
+    for roi in StaticData.ROI_NAMES:
+        fm = FlowManager()
+        fm.execute(DataType.FMRI, group, flow_type=FlowType.SINGULAR_RELATIONAL_CODING)
+        del fm
+
+def singular_relational_coding_for_specific_roi(roi, group, with_plot: bool = False):
+    fm = FlowManager()
+    fm.execute(DataType.FMRI, roi, group, flow_type=FlowType.SINGULAR_RELATIONAL_CODING)
 
 if __name__ == '__main__':
     # relation_coding_for_specific_roi("RH_SomMot_6", avg_data=False, with_plot=True)
     # relation_coding_for_all_roi(avg_data=True, with_plot=True, group='_GROUP2')
     # relation_coding_for_all_roi(avg_data=True, with_plot=True, group='_GROUP1')
-    # activations_pattern_for_specific_roi('RH_Default_pCunPCC_6', with_plot=True)
-    activations_pattern_for_all_roi(group='', with_plot=True)
+    # activations_pattern_for_specific_roi('RH_Default_pCunPCC_6', group='_GROUP2', with_plot=True)
+    # activations_pattern_for_all_roi(group='', with_plot=True)
+    singular_relational_coding_for_specific_roi('RH_Default_pCunPCC_6', group='')
