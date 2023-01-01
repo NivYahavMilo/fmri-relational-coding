@@ -24,11 +24,11 @@ class SingularRelationalCoding(RelationalCodingBase):
             task_vector = self.get_single_tr_vector(data=d_task, clip_i=clip_i)
             rest_avg_vec = self._get_avg_rest_matrix(rest_data=d_rest, clip_index=clip_i)
             score = np.corrcoef(task_vector, rest_avg_vec)
-            singular_corr[clip_name] = score[0,1]
+            singular_corr[clip_name] = score[0, 1]
 
         return singular_corr
 
-    def run(self, roi: str, avg_data: bool = False, group: str = ''):
+    def run(self, roi: str, *args, **kwargs):
         save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS, f"{roi}.pkl")
         if os.path.isfile(save_path):
             return

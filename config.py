@@ -20,6 +20,9 @@ FMRI_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_co
 FMRI_RELATION_CODING_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'relational_coding_avg{group}')
 FMRI_RELATION_CODING_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'figures{group}')
 
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding',
+                                                            'custom_temporal_relational_coding', '{range}')
+
 K_GRAYORIDNATES = 59412
 
 NETWORK_MAPPING_TEMPLATE_FILE = r'Schaefer2018_{roi}Parcels_{nw}Networks_order_FSLMNI152_{mm}mm.Centroid_RAS.csv'

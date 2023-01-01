@@ -49,9 +49,25 @@ def singular_relational_coding(group, with_plot: bool = False):
         fm.execute(DataType.FMRI, group, flow_type=FlowType.SINGULAR_RELATIONAL_CODING)
         del fm
 
+
 def singular_relational_coding_for_specific_roi(roi, group, with_plot: bool = False):
     fm = FlowManager()
     fm.execute(DataType.FMRI, roi, group, flow_type=FlowType.SINGULAR_RELATIONAL_CODING)
+
+
+def custom_temporal_relational_coding_for_specific_roi(roi, rest_ws, task_ws, with_plot: bool = False):
+    fm = FlowManager()
+    fm.execute(DataType.FMRI, roi, rest_ws, task_ws, flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING)
+
+def custom_temporal_relational_coding(rest_ws, task_ws, with_plot: bool = False):
+    for roi in StaticData.ROI_NAMES:
+        fm = FlowManager()
+        fm.execute(DataType.FMRI, roi, rest_ws, task_ws, flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING)
+        del fm
+
+        if with_plot:
+            plot.custom_window_rc_histogram(roi=roi, rest_window=rest_ws, task_window=task_ws)
+
 
 if __name__ == '__main__':
     # relation_coding_for_specific_roi("RH_SomMot_6", avg_data=False, with_plot=True)
@@ -59,4 +75,6 @@ if __name__ == '__main__':
     # relation_coding_for_all_roi(avg_data=True, with_plot=True, group='_GROUP1')
     # activations_pattern_for_specific_roi('RH_Default_pCunPCC_6', group='_GROUP2', with_plot=True)
     # activations_pattern_for_all_roi(group='', with_plot=True)
-    singular_relational_coding_for_specific_roi('RH_Default_pCunPCC_6', group='')
+    # singular_relational_coding_for_specific_roi('RH_Default_pCunPCC_6', group='')
+    #custom_temporal_relational_coding_for_specific_roi(roi='RH_Default_pCunPCC_6', rest_ws=(0, 5), task_ws=5)
+    custom_temporal_relational_coding(rest_ws=(6, 16), task_ws=10, with_plot=True)

@@ -3,10 +3,23 @@ import os
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 import config
 import data_normalizer.utils as utils
 from data_center.static_data.static_data import StaticData
+
+
+def custom_window_rc_histogram(roi, rest_window, task_window):
+    output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(range=f'task_{task_window}_rest{rest_window[0]}-{rest_window[1]}')
+    res_path = os.path.join(output_dir, f"{roi}.pkl")
+    data = pd.read_pickle(res_path)
+    rc_values = pd.Series(list(data.values())).plot.hist(bins=20)
+    plt.title(f"Histogram of custom window singular relational coding for {roi}\n"
+              f"in range - rest: {rest_window}, task {task_window} ")
+    plt.xlabel("Correlation Value")
+
+    plt.show()
 
 
 def plot_error_bar(data, roi, group='', save_img=None):

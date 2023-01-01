@@ -4,11 +4,31 @@ from abc import abstractmethod
 import pandas as pd
 
 import config
+from arithmetic_operations.matrix_op import MatrixOperations
 from data_center.static_data.static_data import StaticData
 from enums import Mode
 
 
 class RelationalCodingBase:
+
+    def correlate_current_timepoint(self, data):
+        df = pd.DataFrame.from_dict(data, orient='columns')
+        df = self.rearrange_clip_order(df)
+        df_corr = df.corr()
+
+        rest_cor = df_corr.iloc[len(df_corr) // 2:, len(df_corr) // 2:]
+        clip_cor = df_corr.iloc[:len(df_corr) // 2, :len(df_corr) // 2]
+
+        flat_corr_rest = MatrixOperations.drop_symmetric_side_of_a_matrix(rest_cor)
+        flat_corr_task = MatrixOperations.drop_symmetric_side_of_a_matrix(clip_cor)
+
+        general_corr = pd.DataFrame()
+        general_corr['task'] = flat_corr_task
+        general_corr['rest'] = flat_corr_rest
+
+        tr_corr = general_corr.corr()
+        distance = round(tr_corr.loc['task'].at['rest'], 3)
+        return distance, df_corr.fillna(1)
 
     @staticmethod
     def rearrange_clip_order(df):
@@ -65,7 +85,7 @@ class RelationalCodingBase:
             raise ValueError("ROI name incorrect\n", "check the following list:\n", StaticData.ROI_NAMES)
 
     @abstractmethod
-    def run(self, roi: str, avg_data: bool, group: str):
+    def run(self, roi: str, *args, **kwargs):
         """
         run relational coding flow.
         """

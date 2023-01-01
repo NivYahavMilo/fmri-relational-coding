@@ -29,3 +29,4 @@ class FlowType(Enum):
     RELATIONAL_CODING = auto()
     ACTIVATIONS_PATTERNS = auto()
     SINGULAR_RELATIONAL_CODING = auto()
+    CUSTOM_TEMPORAL_RELATIONAL_CODING = auto()
