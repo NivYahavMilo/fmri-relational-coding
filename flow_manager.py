@@ -4,7 +4,7 @@ from activtions_patterns.artifical_activations_pattern import ArtificialActivati
 from activtions_patterns.fmri_activations_pattern import FmriActivationPattern
 from data_center.static_data.static_data import StaticData
 from data_normalizer.raw_dataloader import ParcelData
-from data_normalizer.split_wb_networks import Roi2Networks
+from data_normalizer.split_wb_networks import MapRoiToNetwork
 from data_normalizer.voxel_to_roi import Voxel2Roi
 from enums import Mode, DataType, FlowType
 from relational_coding.artificial_relational_coding import ActivationsRelationalCoding
@@ -33,7 +33,7 @@ class FlowManager:
 
     @classmethod
     def _preprocess_roi_to_networks(cls, *args):
-        roi_to_network = Roi2Networks()
+        roi_to_network = MapRoiToNetwork()
         roi_to_network.flow()
 
     @classmethod

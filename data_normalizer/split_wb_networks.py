@@ -7,7 +7,7 @@ import config
 from enums import Network
 
 
-class Roi2Networks:
+class MapRoiToNetwork:
     networks_indices = {
         Network.Visual: (range(0, 24), range(150, 173)),
         Network.Limbic: (range(85, 95), range(237, 247)),
@@ -28,13 +28,12 @@ class Roi2Networks:
             data[net.name][:, range2.start:range2.stop, :]),
             axis=1)
 
-        data_path = os.path.join(config.DATA_CENTER)
+        data_path = os.path.join(config.DATA_DRIVE_E, 'Schaefer2018_300_ROI_LEVEL', f'{net.name}.pkl')
         with open(data_path, 'wb') as f:
             pickle.dump(pkl_data, f)
 
     @staticmethod
     def load_raw_data():
-        #todo: change path to E drive
         data_path = os.path.join(config.DATA_CENTER, 'raw_data')
         file_name = os.listdir(data_path)[0]
         with open(file_name, 'r') as f:
