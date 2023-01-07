@@ -1,6 +1,8 @@
 import os
+import random
 from abc import abstractmethod
 
+import numpy as np
 import pandas as pd
 
 import config
@@ -11,9 +13,11 @@ from enums import Mode
 
 class RelationalCodingBase:
 
-    def correlate_current_timepoint(self, data):
+    def correlate_current_timepoint(self, data, shuffle_rest=False):
         df = pd.DataFrame.from_dict(data, orient='columns')
         df = self.rearrange_clip_order(df)
+        if shuffle_rest:
+            df = self.shuffle_rest_vectors(df)
         df_corr = df.corr()
 
         rest_cor = df_corr.iloc[len(df_corr) // 2:, len(df_corr) // 2:]
@@ -33,6 +37,14 @@ class RelationalCodingBase:
     @staticmethod
     def rearrange_clip_order(df):
         clip_order = StaticData.CLIPS_ORDER + StaticData.REST_ORDER
+        df = df[clip_order]
+        return df
+
+    @staticmethod
+    def shuffle_rest_vectors(df):
+        rest_clips = StaticData.REST_ORDER.copy()
+        np.random.shuffle(rest_clips)
+        clip_order = StaticData.CLIPS_ORDER + rest_clips
         df = df[clip_order]
         return df
 

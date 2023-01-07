@@ -30,7 +30,7 @@ class FmriRelationalCoding(RelationalCodingBase):
                 task_data=d_task,
                 timepoint=tr)
 
-            rc_distance, corr_df = self.correlate_current_timepoint(data=timepoint_clip_matrix)
+            rc_distance, corr_df = self.correlate_current_timepoint(data=timepoint_clip_matrix, shuffle_rest=False)
             sub_rc_dis.append(rc_distance)
             sub_rc_corr.append(corr_df)
         return sub_rc_dis, sub_rc_corr
