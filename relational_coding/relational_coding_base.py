@@ -54,14 +54,19 @@ class RelationalCodingBase:
 
     @staticmethod
     def get_single_tr_vector(data: pd.DataFrame, clip_i: int, timepoint: int = -1):
+        drop_columns = []
+
         if timepoint == -1:
             xdf = data[data['y'] == clip_i]
             timepoint = int(max(xdf['timepoint'].values))
 
         sequence = data[(data['timepoint'] == timepoint) &
                         (data['y'] == clip_i)]
+        if sequence.get('Subject'):
+            drop_columns.append('Subject')
 
-        sequence = sequence.drop(['Subject', 'y', 'timepoint'], axis=1)
+        drop_columns.extend(['y', 'timepoint'])
+        sequence = sequence.drop(drop_columns, axis=1)
 
         return sequence.values[0].tolist()
 
@@ -83,7 +88,7 @@ class RelationalCodingBase:
         roi_data_df = pd.read_pickle(roi_data_p)
         return roi_data_df
 
-    def load_avg_data(self, roi_name: str, mode: Mode, group: int):
+    def load_avg_data(self, roi_name: str, mode: Mode, group: str = ''):
         self._check_roi_validity(roi_name)
         # if pass validity checks
         data_path = config.SUBNET_DATA_AVG.format(mode=mode.value, group=group)

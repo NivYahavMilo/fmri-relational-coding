@@ -24,7 +24,10 @@ def custom_window_rc_histogram(roi, rest_window, task_window):
 
 
 def plot_error_bar(data, roi, group='', save_img=None):
-    plt.errorbar([*range(19)], data['mean'], data['std'])
+    if isinstance(data, list):
+        plt.errorbar([*range(19)], data)
+    else:
+        plt.errorbar([*range(19)], data['mean'], data['std'])
     plt.title(f"Mean and Standard deviation of {roi} {group}")
     plt.xlabel("Rest TR")
     plt.ylabel("Correlation Value")
@@ -35,10 +38,14 @@ def plot_error_bar(data, roi, group='', save_img=None):
         fig1.savefig(save_img, dpi=100)
 
 
-def plot_pipe_avg(roi_name, group: str = ''):
+def plot_pipe_avg(roi_name, group: str = '', shuffle=False):
     res_path = config.FMRI_RELATION_CODING_RESULTS_AVG.format(group=group.lower())
+    if shuffle:
+        res_path = config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS
     data = utils.load_pkl(f"{res_path}\\{roi_name}.pkl")
-    save_img = fr"{config.FMRI_RELATION_CODING_RESULTS_FIGURES.format(group=group)}\\{roi_name}.png"
+    save_img = os.path.join(config.FMRI_RELATION_CODING_RESULTS_FIGURES.format(group=group), f'{roi_name}.png')
+    if shuffle:
+        save_img = os.path.join(config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS_FIGURES, f'{roi_name}.png')
     plot_error_bar(data['avg'], roi_name, group, save_img)
 
 

@@ -21,7 +21,7 @@ FMRI_RELATION_CODING_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'relationa
 FMRI_RELATION_CODING_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'figures{group}')
 
 FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'relational_coding_shuffle_rest')
-FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'relational_coding_shuffle_rest', 'figures')
+FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'figures_shuffle_rest')
 
 
 FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'custom_temporal_relational_coding', '{range}')

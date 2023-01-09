@@ -13,10 +13,16 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
 
     @staticmethod
     def __get_rest_window_slides_vectors(data_rest, clip_i, window_size_rest):
+        drop_columns = []
+
         rest_ct = data_rest[data_rest['y'] == clip_i]
         start, end = window_size_rest
-        rest_ct_window = rest_ct[rest_ct['timepoint'].isin(range(start, end))].drop(['y', 'timepoint', 'Subject'],
-                                                                                    axis=1)
+
+        if rest_ct.get('Subject'):
+            drop_columns.append('Subject')
+        drop_columns.extend(['y', 'timepoint'])
+
+        rest_ct_window = rest_ct[rest_ct['timepoint'].isin(range(start, end))].drop(drop_columns, axis=1)
         rest_window_avg = np.mean(rest_ct_window.values, axis=0)
         rest_window_avg_z = z_score(rest_window_avg)
 
@@ -24,10 +30,16 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
 
     @staticmethod
     def __get_task_window_slides_vectors(data_task, clip_i, window_size_task):
+        drop_columns = []
+
         clip_ct = data_task[(data_task['y'] == clip_i)]
         max_timepoint = clip_ct['timepoint'].max()
         clip_window = range(max_timepoint - window_size_task, max_timepoint)
-        clip_ct_window = clip_ct[clip_ct['timepoint'].isin(clip_window)].drop(['y', 'timepoint', 'Subject'], axis=1)
+        if clip_ct.get('Subject'):
+            drop_columns.append('Subject')
+        drop_columns.extend(['y', 'timepoint'])
+
+        clip_ct_window = clip_ct[clip_ct['timepoint'].isin(clip_window)].drop(drop_columns, axis=1)
         task_window_avg = np.mean(clip_ct_window.values, axis=0)
         task_window_avg_z = z_score(task_window_avg)
 
@@ -54,10 +66,7 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
         rc_distance, _ = self.correlate_current_timepoint(data=custom_temporal_window_vec, shuffle_rest=shuffle)
         return rc_distance
 
-    def run(self, roi: str, *args, **kwargs):
-        ws_task = kwargs['task_window_size']
-        ws_rest = kwargs['rest_window_size']
-        shuffle = kwargs.get('shuffle_rest', False)
+    def __subject_flow(self, roi, ws_task, ws_rest, shuffle):
         output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(
             range=f'task_{ws_task}_rest{ws_rest[0]}-{ws_rest[1]}')
 
@@ -84,3 +93,53 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
 
         utils.dict_to_pkl(data, save_path.replace('.pkl', ''))
         print(f'saved {roi}')
+
+    def __avg_flow(self, roi, ws_task, ws_rest, shuffle):
+
+        output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG.format(
+            range=f'task_{ws_task}_rest{ws_rest[0]}-{ws_rest[1]}')
+
+        save_path = os.path.join(output_dir, f"{roi}.pkl")
+
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+        if os.path.isfile(save_path):
+            return
+
+        data = {}
+        roi_data_task = self.load_avg_data(roi_name=roi, mode=Mode.CLIPS)
+        roi_data_rest = self.load_avg_data(roi_name=roi, mode=Mode.REST)
+
+        rc_distance = self.__custom_temporal_relational_coding(
+            data_task=roi_data_task,
+            data_rest=roi_data_rest,
+            window_size_rest=ws_rest,
+            window_size_task=ws_task,
+            shuffle=shuffle)
+
+        data['avg'] = rc_distance
+
+        utils.dict_to_pkl(data, save_path.replace('.pkl', ''))
+        print(f'saved {roi}')
+
+    def run(self, roi: str, *args, **kwargs):
+        ws_task = kwargs['task_window_size']
+        ws_rest = kwargs['rest_window_size']
+        avg_data = kwargs['average_data']
+        shuffle = kwargs.get('shuffle_rest', False)
+        if avg_data:
+            self.__avg_flow(
+                roi=roi,
+                ws_task=ws_task,
+                ws_rest=ws_rest,
+                shuffle=shuffle,
+            )
+            return
+
+        self.__subject_flow(
+            roi=roi,
+            ws_task=ws_task,
+            ws_rest=ws_rest,
+            shuffle=shuffle,
+        )

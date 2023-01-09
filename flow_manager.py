@@ -42,13 +42,14 @@ class FlowManager:
         roi_name: str = args[1]
         avg_flag: bool = args[2]
         group: str = args[3]
+        shuffle: bool = args[4]
 
         relational_coding_mapping = {
             DataType.FMRI: FmriRelationalCoding,
             DataType.ACTIVATIONS: ActivationsRelationalCoding
         }
         relation_coding = relational_coding_mapping.get(relation_coding_type)()
-        relation_coding.run(roi=roi_name, avg_data=avg_flag, group=group)
+        relation_coding.run(roi=roi_name, avg_data=avg_flag, group=group, shuffle=shuffle)
 
     @classmethod
     def _singular_relational_coding(cls, *args):
@@ -76,8 +77,14 @@ class FlowManager:
         roi_name: str = args[1]
         rest_window_size: tuple = args[2]
         task_window_size: int = args[3]
+        avg_data: bool = args[4]
         custom_temporal_rc = CustomTemporalRelationalCoding()
-        custom_temporal_rc.run(roi=roi_name, rest_window_size=rest_window_size, task_window_size=task_window_size)
+        custom_temporal_rc.run(
+            roi=roi_name,
+            rest_window_size=rest_window_size,
+            task_window_size=task_window_size,
+            average_data=avg_data
+        )
 
     @classmethod
     def execute(cls, *args, **kwargs):
