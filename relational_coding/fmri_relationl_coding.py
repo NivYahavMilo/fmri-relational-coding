@@ -66,13 +66,16 @@ class FmriRelationalCoding(RelationalCodingBase):
 
         if avg_data:
             save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS_AVG.format(group=group.lower()), f"{roi}.pkl")
-        if shuffle_rest:
-            save_path = os.path.join(os.path.join(config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl"))
-            if os.path.isfile(save_path):
-                return
+            if shuffle_rest:
+                save_path = os.path.join(os.path.join(config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl"))
+                if os.path.isfile(save_path):
+                    return
             self.avg_data_flow(roi, save_path, group, shuffle_rest)
+
         else:
             save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS, f"{roi}.pkl")
-            if os.path.isfile(save_path):
-                return
+            if shuffle_rest:
+                save_path = os.path.join(os.path.join(config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl"))
+                if os.path.isfile(save_path):
+                    return
             self.subject_flow(roi, save_path, shuffle_rest)

@@ -25,10 +25,10 @@ FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'res
 
 
 FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'custom_temporal_relational_coding', '{range}')
-FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding','custom_temporal_relational_coding','figures')
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding','custom_temporal_relational_coding','figures', '{task_window}_task_window')
 
 FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'custom_temporal_relational_coding_avg', '{range}')
-FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding','custom_temporal_relational_coding_avg','figures')
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding','custom_temporal_relational_coding_avg','figures', '{task_window}_task_window')
 
 K_GRAYORIDNATES = 59412
 

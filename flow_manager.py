@@ -14,8 +14,6 @@ from relational_coding.singular_relational_coding import SingularRelationalCodin
 
 
 class FlowManager:
-    # load dictionary to static class members
-    StaticData.inhabit_class_members()
 
     @classmethod
     def _map_voxel_to_roi(cls, *args):
@@ -76,12 +74,14 @@ class FlowManager:
         relation_coding_type: DataType = args[0]
         roi_name: str = args[1]
         rest_window_size: tuple = args[2]
-        task_window_size: int = args[3]
-        avg_data: bool = args[4]
+        init_window_task: str = args[3]
+        task_window_size: int = args[4]
+        avg_data: bool = args[5]
         custom_temporal_rc = CustomTemporalRelationalCoding()
         custom_temporal_rc.run(
             roi=roi_name,
             rest_window_size=rest_window_size,
+            init_window_task=init_window_task,
             task_window_size=task_window_size,
             average_data=avg_data
         )

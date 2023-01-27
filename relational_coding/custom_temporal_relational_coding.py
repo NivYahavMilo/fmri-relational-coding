@@ -18,7 +18,7 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
         rest_ct = data_rest[data_rest['y'] == clip_i]
         start, end = window_size_rest
 
-        if rest_ct.get('Subject'):
+        if 'Subject' in rest_ct.columns:
             drop_columns.append('Subject')
         drop_columns.extend(['y', 'timepoint'])
 
@@ -29,13 +29,27 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
         return rest_window_avg_z
 
     @staticmethod
-    def __get_task_window_slides_vectors(data_task, clip_i, window_size_task):
+    def __get_task_window_slides_vectors(data_task, clip_i, init_window, window_size_task):
         drop_columns = []
 
         clip_ct = data_task[(data_task['y'] == clip_i)]
-        max_timepoint = clip_ct['timepoint'].max()
-        clip_window = range(max_timepoint - window_size_task, max_timepoint)
-        if clip_ct.get('Subject'):
+
+        if init_window == 'start':
+            init_timepoint = clip_ct['timepoint'].min()
+            clip_window = range(init_timepoint, window_size_task)
+
+        elif init_window == 'end':
+            init_timepoint = clip_ct['timepoint'].max()
+            clip_window = range(init_timepoint - window_size_task, init_timepoint)
+
+        elif init_window == 'middle':
+            init_timepoint = clip_ct['timepoint'].min() + (clip_ct['timepoint'].max() - clip_ct['timepoint'].min()) // 2
+            clip_window = range(init_timepoint - window_size_task // 2, init_timepoint + window_size_task // 2)
+
+        else:
+            raise ValueError('init_window value wrong')
+
+        if 'Subject' in clip_ct.columns:
             drop_columns.append('Subject')
         drop_columns.extend(['y', 'timepoint'])
 
@@ -51,6 +65,7 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
             data_task,
             data_rest,
             window_size_rest,
+            init_window_task,
             window_size_task,
             shuffle
     ):
@@ -58,7 +73,8 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
         custom_temporal_window_vec = {}
         for clip_i in range(1, 15):
             clip_name = self.get_clip_name_by_index(clip_i)
-            task_window_avg = self.__get_task_window_slides_vectors(data_task, clip_i, window_size_task)
+            task_window_avg = self.__get_task_window_slides_vectors(data_task, clip_i, init_window_task,
+                                                                    window_size_task)
             rest_window_avg = self.__get_rest_window_slides_vectors(data_rest, clip_i, window_size_rest)
             custom_temporal_window_vec[clip_name + '_task'] = task_window_avg
             custom_temporal_window_vec[clip_name + '_rest'] = rest_window_avg
@@ -66,9 +82,9 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
         rc_distance, _ = self.correlate_current_timepoint(data=custom_temporal_window_vec, shuffle_rest=shuffle)
         return rc_distance
 
-    def __subject_flow(self, roi, ws_task, ws_rest, shuffle):
+    def __subject_flow(self, roi, init_window_task, ws_task, ws_rest, shuffle):
         output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(
-            range=f'task_{ws_task}_rest{ws_rest[0]}-{ws_rest[1]}')
+            range=f'task_{init_window_task}_{ws_task}_tr_rest{ws_rest[0]}-{ws_rest[1]}_tr')
 
         save_path = os.path.join(output_dir, f"{roi}.pkl")
 
@@ -86,18 +102,18 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
                 data_task=roi_sub_data_task,
                 data_rest=roi_sub_data_rest,
                 window_size_rest=ws_rest,
+                init_window_task=init_window_task,
                 window_size_task=ws_task,
                 shuffle=shuffle)
 
             data[sub_id] = rc_distance
 
         utils.dict_to_pkl(data, save_path.replace('.pkl', ''))
-        print(f'saved {roi}')
 
-    def __avg_flow(self, roi, ws_task, ws_rest, shuffle):
+    def __avg_flow(self, roi, init_window_task, ws_task, ws_rest, shuffle):
 
         output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG.format(
-            range=f'task_{ws_task}_rest{ws_rest[0]}-{ws_rest[1]}')
+            range=f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr')
 
         save_path = os.path.join(output_dir, f"{roi}.pkl")
 
@@ -115,6 +131,7 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
             data_task=roi_data_task,
             data_rest=roi_data_rest,
             window_size_rest=ws_rest,
+            init_window_task=init_window_task,
             window_size_task=ws_task,
             shuffle=shuffle)
 
@@ -124,6 +141,7 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
         print(f'saved {roi}')
 
     def run(self, roi: str, *args, **kwargs):
+        init_window_task = kwargs['init_window_task']
         ws_task = kwargs['task_window_size']
         ws_rest = kwargs['rest_window_size']
         avg_data = kwargs['average_data']
@@ -131,6 +149,7 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
         if avg_data:
             self.__avg_flow(
                 roi=roi,
+                init_window_task=init_window_task,
                 ws_task=ws_task,
                 ws_rest=ws_rest,
                 shuffle=shuffle,
@@ -139,6 +158,7 @@ class CustomTemporalRelationalCoding(RelationalCodingBase):
 
         self.__subject_flow(
             roi=roi,
+            init_window_task=init_window_task,
             ws_task=ws_task,
             ws_rest=ws_rest,
             shuffle=shuffle,

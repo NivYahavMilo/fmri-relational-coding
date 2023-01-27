@@ -8,17 +8,17 @@ import config
 from data_center.static_data.static_data import StaticData
 
 
-def window_relational_coding_plot(show=True, save_img=False, avg_data=False):
+def window_relational_coding_plot(task_window, show=True, save_img=False, avg_data=False):
     if not getattr(StaticData, 'ROI_NAMES'):
         StaticData.inhabit_class_members()
 
     if avg_data:
         results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG
-        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES
+        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES.format(task_window=task_window)
     else:
         results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS
-        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES
-    task_window = 10
+        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES.format(task_window=task_window)
+    task_range = 10
     w_s = 0
     w_e = 5
 
@@ -27,7 +27,7 @@ def window_relational_coding_plot(show=True, save_img=False, avg_data=False):
         std_roi = []
         rest_windows = []
         while w_e < 19:
-            res_path = results_path.format(range=f'task_{task_window}_rest{w_s}-{w_e}')
+            res_path = results_path.format(range=f'task_{task_window}_{task_range}_tr_rest_{w_s}-{w_e}_tr')
             res_path = os.path.join(res_path, f"{roi}.pkl")
             data = pd.read_pickle(res_path)
             rc_values = pd.Series(list(data.values()))
