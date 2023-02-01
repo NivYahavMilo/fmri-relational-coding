@@ -7,6 +7,7 @@ from flow_manager import FlowManager
 # load dictionary to static class members
 StaticData.inhabit_class_members()
 
+
 def relation_coding_for_all_roi(avg_data: bool = False, with_plot: bool = False, group: str = '',
                                 shuffle: bool = False):
     for roi in StaticData.ROI_NAMES:
@@ -76,7 +77,7 @@ def custom_temporal_relational_coding(rest_ws, task_ws, with_plot: bool = False)
             plot.custom_window_rc_histogram(roi=roi, rest_window=rest_ws, task_window=task_ws)
 
 
-def moving_window_custom_temporal_relational_coding(average_data, with_plot):
+def moving_window_custom_temporal_relational_coding(average_data, with_plot, with_bar):
     for init_window in ['start', 'middle', 'end']:
         task_ws = 10
         rest_s, rest_e = (0, 5)
@@ -87,14 +88,24 @@ def moving_window_custom_temporal_relational_coding(average_data, with_plot):
                 fm.execute(DataType.FMRI, roi, rest_ws, init_window, task_ws, average_data,
                            flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING)
                 del fm
-
-            print(f'Done window {rest_ws}')
             rest_s += 1
             rest_e += 1
-        print(f'Done {init_window} task window')
 
         if with_plot:
-            plot_window.window_relational_coding_plot(task_window=init_window, show=True, save_img=True, avg_data=average_data)
+            plot_window.window_relational_coding_plot(task_window=init_window, show=True, save_img=True,
+                                                      avg_data=average_data)
+    if with_bar:
+        plot_window.window_average_rc_bar_plot(avg_data=average_data, with_shuffle=True, save_img=True)
+
+
+
+
+def isfc_relational_coding():
+    for roi in StaticData.ROI_NAMES:
+        fm = FlowManager()
+        fm.execute(DataType.FMRI, roi, flow_type=FlowType.ISFC_RELATIONAL_CODING)
+        del fm
+        print(f'done {roi} isfc')
 
 
 if __name__ == '__main__':
@@ -110,5 +121,7 @@ if __name__ == '__main__':
 
     # relation_coding_for_all_roi(avg_data=True, shuffle=True, with_plot=True)
 
-    moving_window_custom_temporal_relational_coding(average_data=True, with_plot=False)
-    moving_window_custom_temporal_relational_coding(average_data=False, with_plot=False)
+    # moving_window_custom_temporal_relational_coding(average_data=True, with_plot=False, with_bar=True)
+    moving_window_custom_temporal_relational_coding(average_data=False, with_plot=False, with_bar=True)
+
+    # isfc_relational_coding()

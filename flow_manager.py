@@ -2,15 +2,15 @@ from typing import Callable
 
 from activtions_patterns.artifical_activations_pattern import ArtificialActivationPattern
 from activtions_patterns.fmri_activations_pattern import FmriActivationPattern
-from data_center.static_data.static_data import StaticData
 from data_normalizer.raw_dataloader import ParcelData
 from data_normalizer.split_wb_networks import MapRoiToNetwork
 from data_normalizer.voxel_to_roi import Voxel2Roi
 from enums import Mode, DataType, FlowType
 from relational_coding.artificial_relational_coding import ActivationsRelationalCoding
-from relational_coding.custom_temporal_relational_coding import CustomTemporalRelationalCoding
+from relational_coding.custom_temporal_relational_coding.custom_temporal_relational_coding import CustomTemporalRelationalCoding
 from relational_coding.fmri_relationl_coding import FmriRelationalCoding
 from relational_coding.singular_relational_coding import SingularRelationalCoding
+from relational_coding.custom_temporal_relational_coding.isfc_relational_coding import ISFCRelationalCoding
 
 
 class FlowManager:
@@ -87,6 +87,15 @@ class FlowManager:
         )
 
     @classmethod
+    def _isfc_relational_coding(cls, *args):
+        data_type: DataType = args[0]
+        roi = args[1]
+
+        isfc_rc = ISFCRelationalCoding()
+        isfc_rc.run(roi=roi)
+
+
+    @classmethod
     def execute(cls, *args, **kwargs):
         flow_type: FlowType = kwargs['flow_type']
 
@@ -97,7 +106,8 @@ class FlowManager:
             FlowType.RELATIONAL_CODING: cls._relational_coding,
             FlowType.ACTIVATIONS_PATTERNS: cls._activations_pattern,
             FlowType.SINGULAR_RELATIONAL_CODING: cls._singular_relational_coding,
-            FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING: cls._custom_temporal_relational_coding
+            FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING: cls._custom_temporal_relational_coding,
+            FlowType.ISFC_RELATIONAL_CODING: cls._isfc_relational_coding
 
         }
 

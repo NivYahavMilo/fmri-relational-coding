@@ -62,10 +62,11 @@ class RelationalCodingBase:
 
         sequence = data[(data['timepoint'] == timepoint) &
                         (data['y'] == clip_i)]
-        if sequence.get('Subject'):
-            drop_columns.append('Subject')
 
+        if 'Subject' in sequence.columns:
+            drop_columns.append('Subject')
         drop_columns.extend(['y', 'timepoint'])
+
         sequence = sequence.drop(drop_columns, axis=1)
 
         return sequence.values[0].tolist()

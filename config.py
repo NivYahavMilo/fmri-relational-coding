@@ -12,23 +12,29 @@ VOXEL_DATA_DF = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_{mode}_DF')
 SUBNET_DATA_DF = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_{mode}_DF')
 SUBNET_DATA_AVG = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_AVG_{mode}{group}')
 
-FMRI_ACTIVATIONS_PATTERN_RESULTS = os.path.join(ROOT_PATH, 'results', 'activations_patterns', 'activations_patterns')
-FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'activations_patterns','activations_patterns{group}')
-FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'activations_patterns', 'activations_patterns_figures{group}')
+""" Results paths """
+ACTIVATIONS_PATTERN = os.path.join(ROOT_PATH, 'results', 'activations_patterns')
+RELATIONAL_CODING = os.path.join(ROOT_PATH, 'results', 'relational_coding')
 
-FMRI_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'relational_coding')
-FMRI_RELATION_CODING_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'relational_coding_avg{group}')
-FMRI_RELATION_CODING_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'figures{group}')
+FMRI_ACTIVATIONS_PATTERN_RESULTS = os.path.join(ACTIVATIONS_PATTERN, 'activations_patterns')
+FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG = os.path.join(ACTIVATIONS_PATTERN, 'activations_patterns{group}')
+FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES = os.path.join(ACTIVATIONS_PATTERN, 'activations_patterns_figures{group}')
 
-FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'relational_coding_shuffle_rest')
-FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'figures_shuffle_rest')
+FMRI_RELATION_CODING_RESULTS = os.path.join(RELATIONAL_CODING,'relational_coding')
+FMRI_RELATION_CODING_RESULTS_AVG = os.path.join(RELATIONAL_CODING, 'relational_coding_avg{group}')
+FMRI_RELATION_CODING_RESULTS_FIGURES = os.path.join(RELATIONAL_CODING, 'figures{group}')
+
+FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS = os.path.join(RELATIONAL_CODING, 'relational_coding_shuffle_rest')
+FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS_FIGURES = os.path.join(RELATIONAL_CODING, 'figures_shuffle_rest')
 
 
-FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'custom_temporal_relational_coding', '{range}')
-FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding','custom_temporal_relational_coding','figures', '{task_window}_task_window')
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS = os.path.join(RELATIONAL_CODING, 'custom_temporal_relational_coding', '{range}')
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES = os.path.join(RELATIONAL_CODING,'custom_temporal_relational_coding','figures', '{task_window}_task_window')
 
-FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG = os.path.join(ROOT_PATH, 'results', 'relational_coding', 'custom_temporal_relational_coding_avg', '{range}')
-FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES = os.path.join(ROOT_PATH, 'results', 'relational_coding','custom_temporal_relational_coding_avg','figures', '{task_window}_task_window')
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG = os.path.join(RELATIONAL_CODING, 'custom_temporal_relational_coding_avg', '{range}')
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES = os.path.join(RELATIONAL_CODING,'custom_temporal_relational_coding_avg','figures', '{task_window}_task_window')
+
+ISFC_RELATIONAL_CODING_RESULTS = os.path.join(RELATIONAL_CODING, 'isfc_relational_coding')
 
 K_GRAYORIDNATES = 59412
 
