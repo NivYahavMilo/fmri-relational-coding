@@ -27,15 +27,19 @@ def plot_error_bar(data, roi, group='', save_img=None):
     if isinstance(data, list):
         plt.errorbar([*range(19)], data)
     else:
-        plt.errorbar([*range(19)], data['mean'], data['std'])
-    plt.title(f"Mean and Standard deviation of {roi} {group}")
+        plt.errorbar([*range(19)], data['mean'], data['std'], linewidth=6)
+    plt.title(f"ISFC Mean and Standard deviation of {roi} {group}")
     plt.xlabel("Rest TR")
     plt.ylabel("Correlation Value")
     fig1 = plt.gcf()
-    plt.show()
+
     if save_img:
-        plt.draw()
-        fig1.savefig(save_img, dpi=100)
+        if not save_img.endswith('.png'):
+            save_img = os.path.join(save_img, f'{roi}.png')
+        if not os.path.isfile(save_img):
+            plt.show()
+            plt.draw()
+            fig1.savefig(save_img, dpi=300)
 
 
 def plot_pipe_avg(roi_name, group: str = '', shuffle=False):
@@ -49,8 +53,10 @@ def plot_pipe_avg(roi_name, group: str = '', shuffle=False):
     plot_error_bar(data['avg'], roi_name, group, save_img)
 
 
-def gather_subjects_results(roi_name):
+def gather_subjects_results(roi_name, path=None):
     res_path = config.FMRI_RELATION_CODING_RESULTS
+    if path:
+        res_path = path
     data = utils.load_pkl(f"{res_path}\\{roi_name}.pkl")
     rc_matrix = np.zeros((len(data), 19))
     ii = 0
@@ -61,11 +67,11 @@ def gather_subjects_results(roi_name):
 
 
 def plot_pipe(roi):
-    rc_mat = gather_subjects_results(roi)
+    rc_mat = gather_subjects_results(roi, path=config.ISFC_RELATIONAL_CODING_RESULTS)
     rc_stats = {}
     rc_stats['mean'] = np.mean(rc_mat, axis=0)
     rc_stats['std'] = np.std(rc_mat, axis=0, ddof=1) // np.sqrt(rc_mat.shape[0])
-    plot_error_bar(rc_stats, roi)
+    plot_error_bar(rc_stats, roi, save_img=config.ISFC_RELATIONAL_CODING_RESULTS_FIGURES)
 
 
 def plot_pipe_single_subject(roi, subject):

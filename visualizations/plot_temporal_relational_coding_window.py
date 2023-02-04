@@ -7,8 +7,9 @@ import pandas as pd
 
 import config
 from data_center.static_data.static_data import StaticData
-from enums import Network
 
+plt.rcParams["figure.figsize"] = (20,10)
+plt.rcParams["font.size"] = 20
 
 def window_average_rc_bar_plot(avg_data, with_shuffle=False, save_img=None):
     if avg_data:
@@ -36,44 +37,48 @@ def window_average_rc_bar_plot(avg_data, with_shuffle=False, save_img=None):
                 w_s += 1
                 w_e += 1
 
-            roi_section[section][roi] = np.mean(window_avg_value)
+            roi_section[section][roi] = np.mean(window_avg_value)# np.max(np.mean(window_avg_value,axis=1))
             w_s = 0
             w_e = 5
 
     if with_shuffle and avg_data:
-        rest_tr = 19
-        shuffle_results = np.zeros((rest_tr, n_subjects))
         roi_section['shuffle'] = {}
         for roi in StaticData.ROI_NAMES:
             res_path = os.path.join(config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl")
             data = pd.read_pickle(res_path)
             mean_rc = np.mean(data['avg'])
-            shuffle_results['shuffle'][roi] = mean_rc
+            roi_section['shuffle'][roi] = mean_rc
 
-    networks = ['vis', 'default', 'cont', 'sommot','dors', 'limbic', 'sal']
-    for net in networks:
-        net_roi = [r for r in StaticData.ROI_NAMES if re.search(fr'{net}', r, re.I)]
+
+    networks = {'Visual': 'vis', 'Default': 'default', 'Frontoparietal': 'cont', 'Somatomotor': 'sommot',
+                'DorsalAttention': 'dors', 'Limbic': 'limbic', 'VentralAttention': 'sal'}
+    for net_name, net_alias in networks.items():
+        net_roi = [r for r in StaticData.ROI_NAMES if re.search(fr'{net_alias}', r, re.I)]
         X_axis = np.arange(len(net_roi))
-        end,mid,start = [],[],[]
+        end, mid, start, shuffle = [], [], [], []
         for r in net_roi:
-
             end.append(roi_section['end'][r])
             mid.append(roi_section['middle'][r])
             start.append(roi_section['start'][r])
-        plt.bar(X_axis + 0.1, end, 0.4, label='end clip')
-        plt.bar(X_axis, mid, 0.4, label='middle clip')
-        plt.bar(X_axis - 0.1, start, 0.4, label='start clip')
+            # shuffle.append(roi_section['shuffle'][r])
+
+
+        plt.bar(X_axis - .2, end, 0.3, label='end clip', color='red')
+        plt.bar(X_axis, mid, 0.3, label='middle clip', color='green')
+        plt.bar(X_axis + 0.2, start, 0.3, label='start clip', color='cyan')
+        if with_shuffle and avg_data:
+            plt.bar(X_axis + 0.4, shuffle, 0.3, label='shuffle clip', color='black')
 
         plt.xticks(X_axis, net_roi, rotation=90, fontsize=6)
         plt.xlabel("ROI")
         plt.ylabel("Averaged Relational Coding")
-        plt.title(f"3 Clip Section Relational Coding {net.title()}")
+        plt.title(f"3 Clip Section Relational Coding Mean Dynamic Value {net_name}")
         plt.legend()
         fig1 = plt.gcf()
         plt.show()
         if save_img:
             plt.draw()
-            fig1.savefig(os.path.join(figure_path.format(task_window='_conclusion'), f'{net.title()}.png'), dpi=300)
+            fig1.savefig(os.path.join(figure_path.format(task_window='_conclusion'), f'{net_name}.png'), dpi=300)
 
 
 def window_relational_coding_plot(task_window, show=True, save_img=False, avg_data=False):
@@ -126,4 +131,4 @@ def window_relational_coding_plot(task_window, show=True, save_img=False, avg_da
             plt.show()
         if save_img:
             plt.draw()
-            fig1.savefig(os.path.join(figure_path, f'{roi}.png'), dpi=100)
+            fig1.savefig(os.path.join(figure_path, f'{roi}.png'), dpi=300)

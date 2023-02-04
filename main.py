@@ -100,12 +100,14 @@ def moving_window_custom_temporal_relational_coding(average_data, with_plot, wit
 
 
 
-def isfc_relational_coding():
+def isfc_relational_coding(with_plot=None):
     for roi in StaticData.ROI_NAMES:
         fm = FlowManager()
         fm.execute(DataType.FMRI, roi, flow_type=FlowType.ISFC_RELATIONAL_CODING)
         del fm
-        print(f'done {roi} isfc')
+
+        if with_plot:
+            plot.plot_pipe(roi)
 
 
 if __name__ == '__main__':
@@ -121,7 +123,7 @@ if __name__ == '__main__':
 
     # relation_coding_for_all_roi(avg_data=True, shuffle=True, with_plot=True)
 
-    # moving_window_custom_temporal_relational_coding(average_data=True, with_plot=False, with_bar=True)
+    #moving_window_custom_temporal_relational_coding(average_data=True, with_plot=False, with_bar=True)
     moving_window_custom_temporal_relational_coding(average_data=False, with_plot=False, with_bar=True)
 
-    # isfc_relational_coding()
+    # isfc_relational_coding(with_plot=1)
