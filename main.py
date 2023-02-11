@@ -77,15 +77,15 @@ def custom_temporal_relational_coding(rest_ws, task_ws, with_plot: bool = False)
             plot.custom_window_rc_histogram(roi=roi, rest_window=rest_ws, task_window=task_ws)
 
 
-def moving_window_custom_temporal_relational_coding(average_data, with_plot, with_bar):
-    for init_window in ['start', 'middle', 'end']:
+def moving_window_custom_temporal_relational_coding(average_data, shuffle, with_plot, with_bar):
+    for init_window in ['end']:
         task_ws = 10
         rest_s, rest_e = (0, 5)
         while rest_e < 19:
             rest_ws = rest_s, rest_e
             for roi in StaticData.ROI_NAMES:
                 fm = FlowManager()
-                fm.execute(DataType.FMRI, roi, rest_ws, init_window, task_ws, average_data,
+                fm.execute(DataType.FMRI, roi, rest_ws, init_window, task_ws, average_data, shuffle,
                            flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING)
                 del fm
             rest_s += 1
@@ -96,8 +96,6 @@ def moving_window_custom_temporal_relational_coding(average_data, with_plot, wit
                                                       avg_data=average_data)
     if with_bar:
         plot_window.window_average_rc_bar_plot(avg_data=average_data, with_shuffle=True, save_img=True)
-
-
 
 
 def isfc_relational_coding(with_plot=None):
@@ -123,7 +121,7 @@ if __name__ == '__main__':
 
     # relation_coding_for_all_roi(avg_data=True, shuffle=True, with_plot=True)
 
-    #moving_window_custom_temporal_relational_coding(average_data=True, with_plot=False, with_bar=True)
-    moving_window_custom_temporal_relational_coding(average_data=False, with_plot=False, with_bar=True)
+    moving_window_custom_temporal_relational_coding(average_data=True, shuffle=True, with_plot=False, with_bar=False)
+    moving_window_custom_temporal_relational_coding(average_data=False, shuffle=True, with_plot=False, with_bar=False)
 
     # isfc_relational_coding(with_plot=1)

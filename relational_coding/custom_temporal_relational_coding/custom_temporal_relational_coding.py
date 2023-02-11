@@ -38,6 +38,8 @@ class CustomTemporalRelationalCoding(RelationalCodingBase, CustomTemporalRelatio
         output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(
             range=f'task_{init_window_task}_{ws_task}_tr_rest{ws_rest[0]}-{ws_rest[1]}_tr')
 
+        if shuffle:
+            output_dir = output_dir.replace('end', 'shuffle')
         save_path = os.path.join(output_dir, f"{roi}.pkl")
 
         if not os.path.exists(output_dir):
@@ -67,6 +69,8 @@ class CustomTemporalRelationalCoding(RelationalCodingBase, CustomTemporalRelatio
         output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG.format(
             range=f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr')
 
+        if shuffle:
+            output_dir = output_dir.replace('end', 'shuffle')
         save_path = os.path.join(output_dir, f"{roi}.pkl")
 
         if not os.path.exists(output_dir):
