@@ -81,14 +81,22 @@ def window_average_rc_bar_plot(avg_data, with_shuffle=False, save_img=None):
             fig1.savefig(os.path.join(figure_path.format(task_window='_conclusion'), f'{net_name}.png'), dpi=300)
 
 
-def window_relational_coding_plot(task_window, show=True, save_img=False, avg_data=False):
+def window_relational_coding_plot(task_window, mode, **kwargs):
     if not getattr(StaticData, 'ROI_NAMES'):
         StaticData.inhabit_class_members()
 
-    if avg_data:
+    if kwargs.get('avg_data'):
         results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG
-        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES.format(
-            task_window=task_window)
+        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES.format(task_window=task_window)
+
+    elif mode=='pca':
+        results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA
+        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA_FIGURES.format(task_window=task_window)
+
+    elif mode =='filtering':
+        results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING
+        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING_FIGURES.format(task_window=task_window)
+
     else:
         results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS
         figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES.format(task_window=task_window)
@@ -96,12 +104,16 @@ def window_relational_coding_plot(task_window, show=True, save_img=False, avg_da
     w_s = 0
     w_e = 5
 
-    for roi in StaticData.ROI_NAMES:
+    if kwargs.get('roi'):
+        rois = [kwargs.get('roi')]
+    else:
+        rois = [roi for roi in StaticData.ROI_NAMES]
+    for roi in rois:
         mean_roi = []
         std_roi = []
         rest_windows = []
         while w_e < 19:
-            res_path = results_path.format(range=f'task_end_{task_window}_{task_range}_tr_rest{w_s}-{w_e}_tr')
+            res_path = results_path.format(range=f'task_{task_window}_{task_range}_tr_rest_{w_s}-{w_e}_tr')
             res_path = os.path.join(res_path, f"{roi}.pkl")
             data = pd.read_pickle(res_path)
             rc_values = pd.Series(list(data.values()))
@@ -122,13 +134,15 @@ def window_relational_coding_plot(task_window, show=True, save_img=False, avg_da
                          y2=np.array(mean_roi) - np.array(std_roi),
                          facecolor='yellow',
                          alpha=0.5)
-        plt.title(f"moving relational coding average window\n{roi}")
+        plt.title(f"moving relational coding average window\n{roi}: order: {kwargs.get('filter_order','')}, cut off: {kwargs.get('cut_off','')}")
         plt.xticks(np.arange(len(rest_windows)), rest_windows, rotation=45)
         plt.ylim([-1, 1])
         plt.xlabel("Mean window range Value")
         fig1 = plt.gcf()
-        if show:
+        if kwargs.get('show'):
             plt.show()
-        if save_img:
-            plt.draw()
-            fig1.savefig(os.path.join(figure_path, f'{roi}.png'), dpi=300)
+        if kwargs.get('save_img'):
+            img_path = os.path.join(figure_path, f'{roi}.png')
+            if not os.path.isfile(img_path):
+                plt.draw()
+                fig1.savefig(img_path, dpi=300)

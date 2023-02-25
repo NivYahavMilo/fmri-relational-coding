@@ -31,3 +31,11 @@ class FlowType(Enum):
     SINGULAR_RELATIONAL_CODING = auto()
     CUSTOM_TEMPORAL_RELATIONAL_CODING = auto()
     ISFC_RELATIONAL_CODING = auto()
+
+
+class FilterType(Enum):
+    LPF = auto()
+
+
+class DecompositionType(Enum):
+    PCA = auto()

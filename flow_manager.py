@@ -70,22 +70,19 @@ class FlowManager:
         relation_coding.run(roi=roi_name, group=group)
 
     @classmethod
-    def _custom_temporal_relational_coding(cls, *args):
+    def _custom_temporal_relational_coding(cls, *args, **kwargs):
         relation_coding_type: DataType = args[0]
         roi_name: str = args[1]
         rest_window_size: tuple = args[2]
         init_window_task: str = args[3]
         task_window_size: int = args[4]
-        avg_data: bool = args[5]
-        shuffle: bool = args[6]
         custom_temporal_rc = CustomTemporalRelationalCoding()
         custom_temporal_rc.run(
             roi=roi_name,
             rest_window_size=rest_window_size,
             init_window_task=init_window_task,
             task_window_size=task_window_size,
-            average_data=avg_data,
-            shuffle_rest=shuffle
+            **kwargs
         )
 
     @classmethod
@@ -114,4 +111,4 @@ class FlowManager:
         }
 
         func_flow: Callable = flow_type_mapping.get(flow_type)
-        func_flow(*args)
+        func_flow(*args, **kwargs)

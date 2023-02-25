@@ -35,6 +35,12 @@ FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS_FIGURES = os.path.join(RELATIONAL_CODI
 FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS = os.path.join(RELATIONAL_CODING, 'custom_temporal_relational_coding', '{range}')
 FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES = os.path.join(RELATIONAL_CODING,'custom_temporal_relational_coding','figures', '{task_window}_task_window')
 
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING = os.path.join(RELATIONAL_CODING, 'custom_temporal_relational_coding_filtering', '{range}')
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING_FIGURES = os.path.join(RELATIONAL_CODING, 'custom_temporal_relational_coding_filtering', 'figures', '{task_window}_task_window')
+
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA = os.path.join(RELATIONAL_CODING, 'custom_temporal_relational_coding_pca', '{range}')
+FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA_FIGURES = os.path.join(RELATIONAL_CODING, 'custom_temporal_relational_coding_pca', 'figures', '{task_window}_task_window')
+
 FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG = os.path.join(RELATIONAL_CODING, 'custom_temporal_relational_coding_avg', '{range}')
 FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES = os.path.join(RELATIONAL_CODING,'custom_temporal_relational_coding_avg','figures', '{task_window}_task_window')
 

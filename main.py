@@ -108,6 +108,52 @@ def isfc_relational_coding(with_plot=None):
             plot.plot_pipe(roi)
 
 
+def moving_window_custom_temporal_relational_coding_with_signal_processing(
+        roi,
+        average_data,
+        shuffle,
+        filtering,
+        decomposition,
+        with_plot
+):
+    for init_window in ['end']:
+        task_ws = 10
+        rest_s, rest_e = (0, 5)
+        while rest_e < 19:
+            rest_ws = rest_s, rest_e
+            # for roi in StaticData.ROI_NAMES:
+            fm = FlowManager()
+            fm.execute(
+                DataType.FMRI,
+                roi,
+                rest_ws,
+                init_window,
+                task_ws,
+                avg_data=average_data,
+                shuffle_rest=shuffle,
+                filtering=filtering,
+                decomposition=decomposition,
+                filter_order=10,
+                filter_cut_off=0.09,
+                flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING
+            )
+            del fm
+            rest_s += 1
+            rest_e += 1
+            print(rest_ws)
+        if with_plot:
+            plot_window.window_relational_coding_plot(
+                roi=roi,
+                task_window=init_window,
+                mode='pca' if decomposition else 'filtering',
+                show=True,
+                save_img=True,
+                avg_data=average_data,
+                filter_order=30,
+                filter_cut_off=0.3,
+            )
+
+
 if __name__ == '__main__':
     # relation_coding_for_specific_roi("RH_SomMot_6", avg_data=False, with_plot=True)
     # relation_coding_for_all_roi(avg_data=True, with_plot=True, group='_GROUP2')
@@ -121,7 +167,23 @@ if __name__ == '__main__':
 
     # relation_coding_for_all_roi(avg_data=True, shuffle=True, with_plot=True)
 
-    moving_window_custom_temporal_relational_coding(average_data=True, shuffle=True, with_plot=False, with_bar=False)
-    moving_window_custom_temporal_relational_coding(average_data=False, shuffle=True, with_plot=False, with_bar=False)
+    # moving_window_custom_temporal_relational_coding(average_data=True, shuffle=True, with_plot=False, with_bar=False)
+    # moving_window_custom_temporal_relational_coding(average_data=False, shuffle=True, with_plot=False, with_bar=False)
+    # moving_window_custom_temporal_relational_coding_with_signal_processing(
+    #     roi='',
+    #     average_data=False,
+    #     shuffle=False,
+    #     filtering=False,
+    #     decomposition=True,
+    #     with_plot=True,
+    # )
 
+    moving_window_custom_temporal_relational_coding_with_signal_processing(
+        roi='RH_Default_Temp_6',
+        average_data=False,
+        shuffle=False,
+        filtering=True,
+        decomposition=False,
+        with_plot=True
+    )
     # isfc_relational_coding(with_plot=1)

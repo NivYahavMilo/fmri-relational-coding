@@ -7,17 +7,29 @@ import pandas as pd
 
 import config
 from arithmetic_operations.matrix_op import MatrixOperations
+from arithmetic_operations.signal_processing import SignalProcessing
+from arithmetic_operations.decomposition import Decomposition
 from data_center.static_data.static_data import StaticData
 from enums import Mode
 
 
 class RelationalCodingBase:
 
-    def correlate_current_timepoint(self, data, shuffle_rest=False):
+    def correlate_current_timepoint(self, data, **kwargs):
         df = pd.DataFrame.from_dict(data, orient='columns')
         df = self.rearrange_clip_order(df)
-        if shuffle_rest:
+
+        # shuffle for results control
+        if kwargs.get('shuffle_rest'):
             df = self.shuffle_rest_vectors(df)
+
+        if kwargs.get('filtering'):
+            filter_order = kwargs.get('filter_order')
+            cut_off = kwargs.get('filter_cut_off')
+            df = SignalProcessing.low_pass_filtering(df, filter_order=filter_order, cut_off=cut_off)
+
+        if kwargs.get('decomposition'):
+            df = Decomposition.reduce_dimensions(df, n_components=0.1)
         df_corr = df.corr()
 
         rest_cor = df_corr.iloc[len(df_corr) // 2:, len(df_corr) // 2:]

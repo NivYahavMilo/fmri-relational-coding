@@ -20,7 +20,7 @@ class CustomTemporalRelationalCoding(RelationalCodingBase, CustomTemporalRelatio
             window_size_rest,
             init_window_task,
             window_size_task,
-            shuffle
+            **kwargs
     ):
 
         custom_temporal_window_vec = {}
@@ -31,15 +31,24 @@ class CustomTemporalRelationalCoding(RelationalCodingBase, CustomTemporalRelatio
             custom_temporal_window_vec[clip_name + '_task'] = task_window_avg
             custom_temporal_window_vec[clip_name + '_rest'] = rest_window_avg
 
-        rc_distance, _ = self.correlate_current_timepoint(data=custom_temporal_window_vec, shuffle_rest=shuffle)
+        rc_distance, _ = self.correlate_current_timepoint(data=custom_temporal_window_vec, **kwargs)
+
         return rc_distance
 
-    def __subject_flow(self, roi, init_window_task, ws_task, ws_rest, shuffle):
-        output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(
-            range=f'task_{init_window_task}_{ws_task}_tr_rest{ws_rest[0]}-{ws_rest[1]}_tr')
+    def __subject_flow(self, roi, init_window_task, ws_task, ws_rest, **kwargs):
+        range_ = f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr'
 
-        if shuffle:
+        output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(range=range_)
+
+        if kwargs.get('shuffle_rest'):
             output_dir = output_dir.replace('end', 'shuffle')
+
+        if kwargs.get('filtering'):
+            output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING.format(range=range_)
+
+        if kwargs.get('decomposition'):
+            output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA.format(range=range_)
+
         save_path = os.path.join(output_dir, f"{roi}.pkl")
 
         if not os.path.exists(output_dir):
@@ -58,19 +67,22 @@ class CustomTemporalRelationalCoding(RelationalCodingBase, CustomTemporalRelatio
                 window_size_rest=ws_rest,
                 init_window_task=init_window_task,
                 window_size_task=ws_task,
-                shuffle=shuffle)
+                **kwargs
+            )
 
             data[sub_id] = rc_distance
 
         utils.dict_to_pkl(data, save_path.replace('.pkl', ''))
 
-    def __avg_flow(self, roi, init_window_task, ws_task, ws_rest, shuffle):
+    def __avg_flow(self, roi, init_window_task, ws_task, ws_rest, **kwargs):
 
-        output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG.format(
-            range=f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr')
+        range_ = f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr'
 
-        if shuffle:
+        output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG.format(range=range_)
+
+        if kwargs.get('shuffle_rest'):
             output_dir = output_dir.replace('end', 'shuffle')
+
         save_path = os.path.join(output_dir, f"{roi}.pkl")
 
         if not os.path.exists(output_dir):
@@ -89,25 +101,26 @@ class CustomTemporalRelationalCoding(RelationalCodingBase, CustomTemporalRelatio
             window_size_rest=ws_rest,
             init_window_task=init_window_task,
             window_size_task=ws_task,
-            shuffle=shuffle)
+            **kwargs
+        )
 
         data['avg'] = rc_distance
 
         utils.dict_to_pkl(data, save_path.replace('.pkl', ''))
 
     def run(self, roi: str, *args, **kwargs):
-        init_window_task = kwargs['init_window_task']
-        ws_task = kwargs['task_window_size']
-        ws_rest = kwargs['rest_window_size']
-        avg_data = kwargs['average_data']
-        shuffle = kwargs.get('shuffle_rest', False)
+        init_window_task = kwargs.pop('init_window_task')
+        ws_task = kwargs.pop('task_window_size')
+        ws_rest = kwargs.pop('rest_window_size')
+        avg_data = kwargs.pop('average_data', False)
+
         if avg_data:
             self.__avg_flow(
                 roi=roi,
                 init_window_task=init_window_task,
                 ws_task=ws_task,
                 ws_rest=ws_rest,
-                shuffle=shuffle,
+                **kwargs
             )
             return
 
@@ -116,5 +129,5 @@ class CustomTemporalRelationalCoding(RelationalCodingBase, CustomTemporalRelatio
             init_window_task=init_window_task,
             ws_task=ws_task,
             ws_rest=ws_rest,
-            shuffle=shuffle,
+            **kwargs
         )
