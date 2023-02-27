@@ -31,6 +31,7 @@ class FlowType(Enum):
     SINGULAR_RELATIONAL_CODING = auto()
     CUSTOM_TEMPORAL_RELATIONAL_CODING = auto()
     ISFC_RELATIONAL_CODING = auto()
+    SNR_MEASUREMENTS = auto()
 
 
 class FilterType(Enum):

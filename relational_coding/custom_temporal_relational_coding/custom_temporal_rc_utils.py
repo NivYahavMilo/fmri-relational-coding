@@ -1,9 +1,32 @@
 import numpy as np
 
 from arithmetic_operations.correlation_and_standartization import z_score
+from relational_coding.relational_coding_base import RelationalCodingBase
 
+class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
 
-class CustomTemporalRelationalCodingUtils:
+    def custom_temporal_relational_coding(
+            self,
+            *,
+            data_task,
+            data_rest,
+            window_size_rest,
+            init_window_task,
+            window_size_task,
+            **kwargs
+    ):
+
+        custom_temporal_window_vec = {}
+        for clip_i in range(1, 15):
+            clip_name = self.get_clip_name_by_index(clip_i)
+            task_window_avg = self.get_task_window_slides_vectors(data_task, clip_i, init_window_task, window_size_task)
+            rest_window_avg = self.get_rest_window_slides_vectors(data_rest, clip_i, window_size_rest)
+            custom_temporal_window_vec[clip_name + '_task'] = task_window_avg
+            custom_temporal_window_vec[clip_name + '_rest'] = rest_window_avg
+
+        rc_distance, _ = self.correlate_current_timepoint(data=custom_temporal_window_vec, **kwargs)
+
+        return rc_distance
 
     @staticmethod
     def get_rest_window_slides_vectors(data_rest, clip_i, window_size_rest):

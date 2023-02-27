@@ -1,18 +1,15 @@
 import os
 
-import numpy as np
 import pandas as pd
 
 import config
 from data_center.static_data.static_data import StaticData
 from data_normalizer import utils
 from enums import Mode
-from relational_coding.custom_temporal_relational_coding.custom_temporal_rc_utils import \
-    CustomTemporalRelationalCodingUtils
-from relational_coding.relational_coding_base import RelationalCodingBase
+from relational_coding.custom_temporal_relational_coding.custom_temporal_rc_utils import CustomTemporalRelationalCodingUtils
 
 
-class ISFCRelationalCoding(RelationalCodingBase, CustomTemporalRelationalCodingUtils):
+class ISFCRelationalCoding(CustomTemporalRelationalCodingUtils):
 
     def __isfc_relational_coding(self, data_task, data_rest, window_size_task, shuffle):
         subjects_avg_data = {}

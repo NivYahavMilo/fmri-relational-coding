@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import pandas as pd
 
 import config
@@ -63,8 +64,6 @@ def get_average_data_leave_one_out():
                 df_values = df.drop(['timepoint', 'Subject', 'y'], axis=1)
                 rest_subject_data.append(df_values.values)
 
-
-
             save_path = os.path.join(config.SUBJECTS_AVG_DATA_LEAVE_ONE_OUT, subject)
             if not os.path.exists(save_path):
                 os.mkdir(save_path)
@@ -78,11 +77,45 @@ def get_average_data_leave_one_out():
             mean_data['y'] = df['y']
             mean_data.to_pickle(roi_path)
 
-            pass
+
+def get_avg_data_by_n_subject(n_subjects: int, mode: Mode, participants: list):
+    for idx, group in enumerate(participants, 1):
+
+        group_path = config.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=idx)
+        if not os.path.exists(group_path):
+            os.makedirs(group_path)
+
+        for roi in StaticData.ROI_NAMES:
+            save_path = os.path.join(group_path, f'{roi}.pkl')
+
+            if os.path.isfile(save_path):
+                continue
+
+            subject_data = []
+
+            for sub in group:
+                df = _load(roi=roi, sub=sub, mode=mode)
+                df_values = df.drop(['timepoint', 'Subject', 'y'], axis=1)
+                subject_data.append(df_values.values)
+
+            mean_data = pd.DataFrame(MatrixOperations.get_avg_matrix(subject_data))
+            mean_data['timepoint'] = df['timepoint']
+            mean_data['y'] = df['y']
+            mean_data.to_pickle(save_path)
 
 
+def iterate_subjects_group():
+    groups = [25, 30, 40, 50]
+
+    for group in groups:
+        subjects_list = StaticData.SUBJECTS.copy()
+        chunk = np.ceil(config.K_SUBJECTS / group)
+        chunks = np.array_split(subjects_list, chunk)
+        [get_avg_data_by_n_subject(n_subjects=group, mode=m, participants=chunks) for m in Mode]
+        print('Done group', group)
 
 
 if __name__ == '__main__':
     # get_subjects_average_roi_matrix()
-    get_average_data_leave_one_out()
+    # get_average_data_leave_one_out()
+    iterate_subjects_group()

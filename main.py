@@ -1,5 +1,6 @@
 import visualizations.plot_relational_coding as plot
 import visualizations.plot_temporal_relational_coding_window as plot_window
+import visualizations.plot_snr_measurement as plot_snr
 from data_center.static_data.static_data import StaticData
 from enums import DataType, FlowType
 from flow_manager import FlowManager
@@ -154,6 +155,38 @@ def moving_window_custom_temporal_relational_coding_with_signal_processing(
             )
 
 
+def snr_measurement(**kwargs):
+    if kwargs.get('roi'):
+        rois = [kwargs.get('roi')]
+    else:
+        rois = StaticData.ROI_NAMES
+
+    group_index = 2
+    for group_subjects in [5, 10, 15, 20, 25, 30, 40, 50]:
+
+        task_ws = 10
+        rest_s, rest_e = (0, 5)
+        while rest_e < 19:
+            rest_ws = rest_s, rest_e
+            for roi in rois:
+                fm = FlowManager()
+                fm.execute(
+                    DataType.FMRI,
+                    roi=roi,
+                    rest_ws=rest_ws,
+                    init_window='end',
+                    task_ws=task_ws,
+                    group_index=group_index,
+                    group_subjects=group_subjects,
+                    flow_type=FlowType.SNR_MEASUREMENTS
+                )
+            del fm
+            rest_s += 1
+            rest_e += 1
+
+    plot_snr.plot_snr_measurement()
+
+
 if __name__ == '__main__':
     # relation_coding_for_specific_roi("RH_SomMot_6", avg_data=False, with_plot=True)
     # relation_coding_for_all_roi(avg_data=True, with_plot=True, group='_GROUP2')
@@ -178,12 +211,13 @@ if __name__ == '__main__':
     #     with_plot=True,
     # )
 
-    moving_window_custom_temporal_relational_coding_with_signal_processing(
-        roi='RH_Default_Temp_6',
-        average_data=False,
-        shuffle=False,
-        filtering=True,
-        decomposition=False,
-        with_plot=True
-    )
+    # moving_window_custom_temporal_relational_coding_with_signal_processing(
+    #     roi='RH_Default_Temp_6',
+    #     average_data=False,
+    #     shuffle=False,
+    #     filtering=True,
+    #     decomposition=False,
+    #     with_plot=True
+    # )
     # isfc_relational_coding(with_plot=1)
+    snr_measurement()

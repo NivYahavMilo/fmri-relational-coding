@@ -11,6 +11,7 @@ from relational_coding.custom_temporal_relational_coding.custom_temporal_relatio
 from relational_coding.fmri_relationl_coding import FmriRelationalCoding
 from relational_coding.singular_relational_coding import SingularRelationalCoding
 from relational_coding.custom_temporal_relational_coding.isfc_relational_coding import ISFCRelationalCoding
+from relational_coding.custom_temporal_relational_coding.snr_measurements import SnrMeasurementsRelationalCoding
 
 
 class FlowManager:
@@ -95,8 +96,14 @@ class FlowManager:
 
 
     @classmethod
+    def _snr_measurement_temporal_relational_coding(cls, *args, **kwargs):
+        snr_analysis = SnrMeasurementsRelationalCoding()
+        snr_analysis.run(**kwargs)
+
+
+    @classmethod
     def execute(cls, *args, **kwargs):
-        flow_type: FlowType = kwargs['flow_type']
+        flow_type: FlowType = kwargs.pop('flow_type')
 
         flow_type_mapping = {
             FlowType.ROI_TO_NETWORK: cls._preprocess_roi_to_networks,
@@ -106,7 +113,8 @@ class FlowManager:
             FlowType.ACTIVATIONS_PATTERNS: cls._activations_pattern,
             FlowType.SINGULAR_RELATIONAL_CODING: cls._singular_relational_coding,
             FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING: cls._custom_temporal_relational_coding,
-            FlowType.ISFC_RELATIONAL_CODING: cls._isfc_relational_coding
+            FlowType.ISFC_RELATIONAL_CODING: cls._isfc_relational_coding,
+            FlowType.SNR_MEASUREMENTS: cls._snr_measurement_temporal_relational_coding
 
         }
 

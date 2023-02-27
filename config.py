@@ -15,6 +15,7 @@ VOXEL_DATA_DF = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_{mode}_DF')
 SUBNET_DATA_DF = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_{mode}_DF')
 SUBNET_DATA_AVG = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_AVG_{mode}{group}')
 SUBJECTS_AVG_DATA_LEAVE_ONE_OUT = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_AVG_LEAVE_ONE_OUT_REST')
+SUBNET_AVG_N_SUBJECTS = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_AVG_N_SUBJECTS_{mode}', 'AVG_{n_subjects}_SUBJECTS', 'GROUP_{group_i}')
 
 """ Results paths """
 ACTIVATIONS_PATTERN = os.path.join(ROOT_PATH, 'results', 'activations_patterns')
@@ -47,7 +48,12 @@ FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES = os.path.join(R
 ISFC_RELATIONAL_CODING_RESULTS = os.path.join(RELATIONAL_CODING, 'isfc_relational_coding')
 ISFC_RELATIONAL_CODING_RESULTS_FIGURES = os.path.join(RELATIONAL_CODING, 'isfc_relational_coding_figures')
 
+SNR_RELATIONAL_CODING_RESULTS = os.path.join(RELATIONAL_CODING, 'snr_relational_coding','{group_amount}_subjects_average', 'group_{group_index}', '{range}')
+SNR_RELATIONAL_CODING_RESULTS_FIGURES = os.path.join(RELATIONAL_CODING, 'snr_relational_coding', 'snr_relational_coding_figures', 'group_{group_index}')
+
 K_GRAYORIDNATES = 59412
+
+K_SUBJECTS = 176
 
 NETWORK_MAPPING_TEMPLATE_FILE = r'Schaefer2018_{roi}Parcels_{nw}Networks_order_FSLMNI152_{mm}mm.Centroid_RAS.csv'
 
