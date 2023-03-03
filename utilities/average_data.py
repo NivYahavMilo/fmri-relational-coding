@@ -85,7 +85,7 @@ def get_avg_data_by_n_subject(n_subjects: int, mode: Mode, participants: list):
         if not os.path.exists(group_path):
             os.makedirs(group_path)
 
-        for roi in StaticData.ROI_NAMES:
+        for roi in ['RH_Default_pCunPCC_1', 'RH_Default_Par_1', 'LH_Default_PFC_15']:
             save_path = os.path.join(group_path, f'{roi}.pkl')
 
             if os.path.isfile(save_path):
@@ -105,9 +105,9 @@ def get_avg_data_by_n_subject(n_subjects: int, mode: Mode, participants: list):
 
 
 def iterate_subjects_group():
-    groups = [25, 30, 40, 50]
 
-    for group in groups:
+
+    for group in range(1,70):
         subjects_list = StaticData.SUBJECTS.copy()
         chunk = np.ceil(config.K_SUBJECTS / group)
         chunks = np.array_split(subjects_list, chunk)
