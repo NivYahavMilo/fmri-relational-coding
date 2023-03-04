@@ -35,7 +35,7 @@ class CustomTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
             roi_sub_data_task = self.load_roi_data(roi_name=roi, subject=sub_id, mode=Mode.CLIPS)
             roi_sub_data_rest = self.load_roi_data(roi_name=roi, subject=sub_id, mode=Mode.REST)
 
-            rc_distance = self.custom_temporal_relational_coding(
+            rc_distance, _ = self.custom_temporal_relational_coding(
                 data_task=roi_sub_data_task,
                 data_rest=roi_sub_data_rest,
                 window_size_rest=ws_rest,
@@ -69,7 +69,7 @@ class CustomTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
         roi_data_task = self.load_avg_data(roi_name=roi, mode=Mode.CLIPS)
         roi_data_rest = self.load_avg_data(roi_name=roi, mode=Mode.REST)
 
-        rc_distance = self.custom_temporal_relational_coding(
+        rc_distance, _ = self.custom_temporal_relational_coding(
             data_task=roi_data_task,
             data_rest=roi_data_rest,
             window_size_rest=ws_rest,

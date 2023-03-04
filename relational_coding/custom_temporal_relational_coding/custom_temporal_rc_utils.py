@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from arithmetic_operations.correlation_and_standartization import z_score
 from relational_coding.relational_coding_base import RelationalCodingBase
@@ -26,7 +27,8 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
 
         rc_distance, _ = self.correlate_current_timepoint(data=custom_temporal_window_vec, **kwargs)
 
-        return rc_distance
+        custom_temporal_window_vec = pd.DataFrame(custom_temporal_window_vec)
+        return rc_distance, custom_temporal_window_vec
 
     @staticmethod
     def get_rest_window_slides_vectors(data_rest, clip_i, window_size_rest):

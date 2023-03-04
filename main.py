@@ -161,6 +161,7 @@ def snr_measurement(**kwargs):
 
     elif kwargs.get('roi'):
         rois = kwargs.get('roi')
+
     else:
         rois = StaticData.ROI_NAMES
 

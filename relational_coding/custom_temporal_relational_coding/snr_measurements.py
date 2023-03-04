@@ -42,7 +42,7 @@ class SnrMeasurementsRelationalCoding(CustomTemporalRelationalCodingUtils):
         roi_data_task = self._load_group_subjects(roi=roi, mode=Mode.CLIPS, **kwargs)
         roi_data_rest = self._load_group_subjects(roi=roi, mode=Mode.REST, **kwargs)
 
-        rc_distance = self.custom_temporal_relational_coding(
+        rc_distance, roi_feature_matrix = self.custom_temporal_relational_coding(
             data_task=roi_data_task,
             data_rest=roi_data_rest,
             window_size_rest=ws_rest,
@@ -52,4 +52,5 @@ class SnrMeasurementsRelationalCoding(CustomTemporalRelationalCodingUtils):
         )
 
         data['relational_coding_distance'] = rc_distance
+        data['feature_matrix'] = roi_feature_matrix
         utils.dict_to_pkl(data, save_path.replace('.pkl', ''))
