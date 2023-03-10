@@ -81,7 +81,7 @@ def window_average_rc_bar_plot(avg_data, with_shuffle=False, save_img=None):
             fig1.savefig(os.path.join(figure_path.format(task_window='_conclusion'), f'{net_name}.png'), dpi=300)
 
 
-def window_relational_coding_plot(task_window, mode, **kwargs):
+def window_relational_coding_plot(task_window, mode=None, **kwargs):
     if not getattr(StaticData, 'ROI_NAMES'):
         StaticData.inhabit_class_members()
 
@@ -105,14 +105,14 @@ def window_relational_coding_plot(task_window, mode, **kwargs):
     w_e = 5
 
     if kwargs.get('roi'):
-        rois = [kwargs.get('roi')]
+        rois = kwargs.pop('roi')
     else:
         rois = [roi for roi in StaticData.ROI_NAMES]
     for roi in rois:
         mean_roi = []
         std_roi = []
         rest_windows = []
-        while w_e < 19:
+        while w_e < 30:
             res_path = results_path.format(range=f'task_{task_window}_{task_range}_tr_rest_{w_s}-{w_e}_tr')
             res_path = os.path.join(res_path, f"{roi}.pkl")
             data = pd.read_pickle(res_path)
@@ -134,7 +134,7 @@ def window_relational_coding_plot(task_window, mode, **kwargs):
                          y2=np.array(mean_roi) - np.array(std_roi),
                          facecolor='yellow',
                          alpha=0.5)
-        plt.title(f"moving relational coding average window\n{roi}: order: {kwargs.get('filter_order','')}, cut off: {kwargs.get('cut_off','')}")
+        plt.title(f"moving relational coding average window\n{roi}")
         plt.xticks(np.arange(len(rest_windows)), rest_windows, rotation=45)
         plt.ylim([-1, 1])
         plt.xlabel("Mean window range Value")

@@ -78,25 +78,37 @@ def custom_temporal_relational_coding(rest_ws, task_ws, with_plot: bool = False)
             plot.custom_window_rc_histogram(roi=roi, rest_window=rest_ws, task_window=task_ws)
 
 
-def moving_window_custom_temporal_relational_coding(average_data, shuffle, with_plot, with_bar):
+def moving_window_custom_temporal_relational_coding(**kwargs):
+    if not isinstance(kwargs.get('roi'), list):
+        rois = [kwargs.pop('roi')]
+
+    elif kwargs.get('roi'):
+        rois = kwargs.pop('roi')
+
+    else:
+        rois = StaticData.ROI_NAMES
+
+    avg_data = kwargs.get('average_data')
     for init_window in ['end']:
         task_ws = 10
         rest_s, rest_e = (0, 5)
-        while rest_e < 19:
+        while rest_e < 30:
             rest_ws = rest_s, rest_e
-            for roi in StaticData.ROI_NAMES:
+            for roi in rois:
                 fm = FlowManager()
-                fm.execute(DataType.FMRI, roi, rest_ws, init_window, task_ws, average_data, shuffle,
-                           flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING)
+                fm.execute(DataType.FMRI, roi, rest_ws, init_window, task_ws,
+                           flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING, **kwargs)
                 del fm
+
+            print('done window', rest_ws)
             rest_s += 1
             rest_e += 1
 
-        if with_plot:
+        if kwargs.get('with_plot'):
             plot_window.window_relational_coding_plot(task_window=init_window, show=True, save_img=True,
-                                                      avg_data=average_data)
-    if with_bar:
-        plot_window.window_average_rc_bar_plot(avg_data=average_data, with_shuffle=True, save_img=True)
+                                                      avg_data=avg_data, roi=rois)
+    if kwargs.get('with_bar'):
+        plot_window.window_average_rc_bar_plot(avg_data=avg_data, with_shuffle=True, save_img=True)
 
 
 def isfc_relational_coding(with_plot=None):
@@ -187,7 +199,13 @@ def snr_measurement(**kwargs):
                 rest_s += 1
                 rest_e += 1
 
-        plot_snr.plot_snr_measurement(group_index)
+        plot_snr.plot_snr_measurement(
+            group_index,
+            save_figure=False,
+            plot_combined_groups=True,
+            plot_heatmap=False,
+            max=True
+        )
 
 
 if __name__ == '__main__':
@@ -223,4 +241,12 @@ if __name__ == '__main__':
     #     with_plot=True
     # )
     # isfc_relational_coding(with_plot=1)
-    snr_measurement(roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'])
+    # snr_measurement(roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'])
+
+    moving_window_custom_temporal_relational_coding(
+        roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'],
+        average_data=True,
+        shuffle=False,
+        with_plot=True,
+        with_bar=False
+    )

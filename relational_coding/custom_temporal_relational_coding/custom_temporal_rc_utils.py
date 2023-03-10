@@ -4,6 +4,7 @@ import pandas as pd
 from arithmetic_operations.correlation_and_standartization import z_score
 from relational_coding.relational_coding_base import RelationalCodingBase
 
+
 class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
 
     def custom_temporal_relational_coding(
@@ -21,7 +22,8 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
         for clip_i in range(1, 15):
             clip_name = self.get_clip_name_by_index(clip_i)
             task_window_avg = self.get_task_window_slides_vectors(data_task, clip_i, init_window_task, window_size_task)
-            rest_window_avg = self.get_rest_window_slides_vectors(data_rest, clip_i, window_size_rest)
+            rest_window_avg = self.get_rest_window_slides_vectors(data_rest, clip_i, window_size_rest,
+                                                                  clip_data=data_task)
             custom_temporal_window_vec[clip_name + '_task'] = task_window_avg
             custom_temporal_window_vec[clip_name + '_rest'] = rest_window_avg
 
@@ -31,7 +33,34 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
         return rc_distance, custom_temporal_window_vec
 
     @staticmethod
-    def get_rest_window_slides_vectors(data_rest, clip_i, window_size_rest):
+    def _add_tr_from_next_clip(window_indices, **kwargs):
+        clip_data = kwargs.pop('clip_data')
+        next_clip = kwargs.pop('next_clip')
+        if next_clip == 15:
+            next_clip = 1
+        clip_data = clip_data[clip_data['y'] == next_clip]
+        if clip_data.empty:
+            return pd.DataFrame()
+
+        drop_columns = []
+        if 'Subject' in clip_data.columns:
+            drop_columns.append('Subject')
+        drop_columns.extend(['y', 'timepoint'])
+
+        start_tr, end_tr = window_indices
+        new_end_of_clip = end_tr - kwargs['max_rest_tr']
+
+        if start_tr <= kwargs['max_rest_tr']:
+            tr_range = range(0, new_end_of_clip)
+
+        else:
+            new_start_of_clip = start_tr - kwargs['max_rest_tr']
+            tr_range = range(new_start_of_clip, new_end_of_clip)
+
+        clip_data_window = clip_data[clip_data['timepoint'].isin(tr_range)].drop(drop_columns, axis=1)
+        return clip_data_window
+
+    def get_rest_window_slides_vectors(self, data_rest, clip_i, window_size_rest, **kwargs):
         drop_columns = []
 
         rest_ct = data_rest[data_rest['y'] == clip_i]
@@ -42,6 +71,14 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
         drop_columns.extend(['y', 'timepoint'])
 
         rest_ct_window = rest_ct[rest_ct['timepoint'].isin(range(start, end))].drop(drop_columns, axis=1)
+
+        max_timepoint = max(rest_ct['timepoint'])
+        if max_timepoint < end:
+            kwargs['max_rest_tr'] = max_timepoint
+            extra_clip_window = self._add_tr_from_next_clip(window_indices=window_size_rest, next_clip=clip_i + 1,
+                                                            **kwargs)
+            rest_ct_window = pd.concat([rest_ct_window, extra_clip_window])
+
         rest_window_avg = np.mean(rest_ct_window.values, axis=0)
         rest_window_avg_z = z_score(rest_window_avg)
 
@@ -59,7 +96,7 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
 
         elif init_window == 'end':
             init_timepoint = clip_ct['timepoint'].max()
-            clip_window = range(init_timepoint - window_size_task+1, init_timepoint+1)
+            clip_window = range(init_timepoint - window_size_task + 1, init_timepoint + 1)
 
         elif init_window == 'middle':
             init_timepoint = clip_ct['timepoint'].min() + (clip_ct['timepoint'].max() - clip_ct['timepoint'].min()) // 2

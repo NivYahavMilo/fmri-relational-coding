@@ -30,6 +30,7 @@ class CustomTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
 
         if os.path.isfile(save_path):
             return
+
         data = {}
         for sub_id in self.yield_subject_generator():
             roi_sub_data_task = self.load_roi_data(roi_name=roi, subject=sub_id, mode=Mode.CLIPS)
