@@ -25,6 +25,11 @@ FMRI_ACTIVATIONS_PATTERN_RESULTS = os.path.join(ACTIVATIONS_PATTERN, 'activation
 FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG = os.path.join(ACTIVATIONS_PATTERN, 'activations_patterns{group}')
 FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES = os.path.join(ACTIVATIONS_PATTERN, 'activations_patterns_figures{group}')
 
+CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS = os.path.join(ACTIVATIONS_PATTERN, 'concat_signals')
+CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG = os.path.join(CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS, '{group_amount}_subjects_average', 'group_{group_index}', '{range}')
+CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES = os.path.join(CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS, 'activations_patterns_figures{group}')
+
+
 FMRI_RELATION_CODING_RESULTS = os.path.join(RELATIONAL_CODING,'relational_coding')
 FMRI_RELATION_CODING_RESULTS_AVG = os.path.join(RELATIONAL_CODING, 'relational_coding_avg{group}')
 FMRI_RELATION_CODING_RESULTS_FIGURES = os.path.join(RELATIONAL_CODING, 'figures{group}')

@@ -32,11 +32,8 @@ class FlowType(Enum):
     CUSTOM_TEMPORAL_RELATIONAL_CODING = auto()
     ISFC_RELATIONAL_CODING = auto()
     SNR_MEASUREMENTS = auto()
+    CONCATENATED_FMRI = auto()
 
-
-class FilterType(Enum):
-    LPF = auto()
-
-
-class DecompositionType(Enum):
-    PCA = auto()
+class AnalysisType(Enum):
+    RELATIONAL_CODING = auto()
+    ACTIVATIONS_PATTERNS = auto()

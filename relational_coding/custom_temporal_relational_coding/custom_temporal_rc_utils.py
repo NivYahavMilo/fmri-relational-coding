@@ -1,11 +1,23 @@
+import os
+
 import numpy as np
 import pandas as pd
 
+import config
 from arithmetic_operations.correlation_and_standartization import z_score
 from relational_coding.relational_coding_base import RelationalCodingBase
 
 
 class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
+
+    @staticmethod
+    def load_group_subjects(roi, mode, **kwargs):
+        n_subjects = kwargs.pop('group_subjects')
+        group_index = kwargs.pop('group_index')
+        group_path = config.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=group_index)
+        roi_path = os.path.join(group_path, f'{roi}.pkl')
+        df = pd.read_pickle(roi_path)
+        return df
 
     def custom_temporal_relational_coding(
             self,
@@ -26,6 +38,9 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
                                                                   clip_data=data_task)
             custom_temporal_window_vec[clip_name + '_task'] = task_window_avg
             custom_temporal_window_vec[clip_name + '_rest'] = rest_window_avg
+
+        if kwargs.get('skip_correlation'):
+            return pd.DataFrame(custom_temporal_window_vec)
 
         rc_distance, _ = self.correlate_current_timepoint(data=custom_temporal_window_vec, **kwargs)
 

@@ -15,6 +15,19 @@ class BaseActivationPattern:
         for i in range(19):
             yield i
 
+    def get_clip_vectors(self, rest_data, task_data, timepoint):
+        tr_vec = {}
+        for clip_i in range(1, 15):
+            clip_name = self.get_clip_name_by_index(clip_i)
+
+            task_vector = self.get_single_tr_vector(data=task_data, clip_i=clip_i)
+            tr_vec[clip_name + '_task'] = task_vector
+
+            rest_vector = self.get_single_tr_vector(data=rest_data, clip_i=clip_i, timepoint=timepoint)
+            tr_vec[clip_name + '_rest'] = rest_vector
+
+        return tr_vec
+
     @staticmethod
     def get_single_tr_vector(data: pd.DataFrame, clip_i: int, timepoint: int = -1):
         if timepoint == -1:
@@ -52,5 +65,5 @@ class BaseActivationPattern:
             raise ValueError("ROI name incorrect\n", "check the following list:\n", StaticData.ROI_NAMES)
 
     @abstractmethod
-    def run(self, roi: str, group: str):
+    def run(self, roi: str, *args, **kwargs):
         pass

@@ -3,23 +3,21 @@ import os
 import pandas as pd
 
 import config
-from activtions_patterns.base_activations_pattern import BaseActivationPattern
 import data_normalizer.utils as utils
+from activtions_patterns.base_activations_pattern import BaseActivationPattern
 from enums import Mode
 
 
 class FmriActivationPattern(BaseActivationPattern):
 
-
     def extract_correlation_values(self, df):
         corr_values = {}
-        for i in range(1,15):
+        for i in range(1, 15):
             clip_name = self.get_clip_name_by_index(i)
             corr_value = df.loc[f'{clip_name}_task'].at[f'{clip_name}_rest']
             corr_values[clip_name] = corr_value
 
         return corr_values
-
 
     def get_activation_pattern(self, d_task, d_rest):
         tr_corr = {}
@@ -33,19 +31,6 @@ class FmriActivationPattern(BaseActivationPattern):
             correlation_dict = self.extract_correlation_values(df_corr)
             tr_corr[tr] = correlation_dict
         return tr_corr
-
-    def get_clip_vectors(self, rest_data, task_data, timepoint):
-        tr_vec = {}
-        for clip_i in range(1, 15):
-            clip_name = self.get_clip_name_by_index(clip_i)
-
-            task_vector = self.get_single_tr_vector(data=task_data, clip_i=clip_i)
-            tr_vec[clip_name + '_task'] = task_vector
-
-            rest_vector = self.get_single_tr_vector(data=rest_data, clip_i=clip_i, timepoint=timepoint)
-            tr_vec[clip_name + '_rest'] = rest_vector
-
-        return tr_vec
 
     def correlate_current_timepoint(self, data):
         df = pd.DataFrame.from_dict(data, orient='columns')
@@ -61,7 +46,8 @@ class FmriActivationPattern(BaseActivationPattern):
         utils.dict_to_pkl(tr_corr, res_path.replace('.pkl', ''))
         print(f'Saved roi {roi}')
 
-    def run(self, roi: str, group: str):
+    def run(self, roi: str, *args, **kwargs):
+        group = kwargs.get('group', '')
         save_path = os.path.join(config.FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG.format(group=group.lower()), f"{roi}.pkl")
         if os.path.isfile(save_path):
             return

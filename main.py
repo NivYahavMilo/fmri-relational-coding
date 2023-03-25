@@ -79,11 +79,11 @@ def custom_temporal_relational_coding(rest_ws, task_ws, with_plot: bool = False)
 
 
 def moving_window_custom_temporal_relational_coding(**kwargs):
-    if not isinstance(kwargs.get('roi'), list):
-        rois = [kwargs.pop('roi')]
+    if isinstance(kwargs.get('roi'), list):
+        rois = kwargs.pop('roi')
 
     elif kwargs.get('roi'):
-        rois = kwargs.pop('roi')
+        rois = [kwargs.pop('roi')]
 
     else:
         rois = StaticData.ROI_NAMES
@@ -168,44 +168,50 @@ def moving_window_custom_temporal_relational_coding_with_signal_processing(
 
 
 def snr_measurement(**kwargs):
-    if not isinstance(kwargs.get('roi'), list):
+    rois = kwargs.get('roi')
+
+    if rois and not isinstance(rois, list):
         rois = [kwargs.get('roi')]
 
-    elif kwargs.get('roi'):
-        rois = kwargs.get('roi')
-
-    else:
+    elif not rois:
         rois = StaticData.ROI_NAMES
+    for init_window in ['start', 'middle', 'end']:
+        for group_index in [1, 2, 3, 4, 5, 6]:
+            for group in range(25, 36):
+                task_ws = 10
+                rest_s, rest_e = (0, 5)
+                while rest_e < 19:
+                    rest_ws = rest_s, rest_e
+                    for roi in rois:
+                        fm = FlowManager()
+                        fm.execute(
+                            DataType.FMRI,
+                            roi=roi,
+                            rest_ws=rest_ws,
+                            init_window=init_window,
+                            task_ws=task_ws,
+                            group_index=group_index,
+                            group_subjects=group,
+                            flow_type=FlowType.CONCATENATED_FMRI
+                        )
+                    del fm
+                    rest_s += 1
+                    rest_e += 1
 
-    for group_index in [1, 2, 3]:
-        for group in range(1, 70):
-            task_ws = 10
-            rest_s, rest_e = (0, 5)
-            while rest_e < 19:
-                rest_ws = rest_s, rest_e
-                for roi in rois:
-                    fm = FlowManager()
-                    fm.execute(
-                        DataType.FMRI,
-                        roi=roi,
-                        rest_ws=rest_ws,
-                        init_window='end',
-                        task_ws=task_ws,
-                        group_index=group_index,
-                        group_subjects=group,
-                        flow_type=FlowType.SNR_MEASUREMENTS
-                    )
-                del fm
-                rest_s += 1
-                rest_e += 1
 
-        plot_snr.plot_snr_measurement(
-            group_index,
-            save_figure=False,
-            plot_combined_groups=True,
-            plot_heatmap=False,
-            max=True
-        )
+
+
+            print('done group i', group_index)
+        print('done window', init_window)
+
+        if kwargs.get('plot'):
+            plot_snr.plot_snr_measurement(
+                group_index,
+                save_figure=False,
+                plot_combined_groups=True,
+                plot_heatmap=False,
+                max=True
+            )
 
 
 if __name__ == '__main__':
@@ -241,12 +247,12 @@ if __name__ == '__main__':
     #     with_plot=True
     # )
     # isfc_relational_coding(with_plot=1)
-    # snr_measurement(roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'])
+    snr_measurement()
 
-    moving_window_custom_temporal_relational_coding(
-        roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'],
-        average_data=True,
-        shuffle=False,
-        with_plot=True,
-        with_bar=False
-    )
+    # moving_window_custom_temporal_relational_coding(
+    #     # roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'],
+    #     average_data=True,
+    #     shuffle=False,
+    #     with_plot=True,
+    #     with_bar=False
+    # )

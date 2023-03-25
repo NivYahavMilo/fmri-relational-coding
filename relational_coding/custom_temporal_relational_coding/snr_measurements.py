@@ -1,23 +1,13 @@
 import os
 
-import pandas as pd
-
 import config
 from data_normalizer import utils
 from enums import Mode
-from relational_coding.custom_temporal_relational_coding.custom_temporal_rc_utils import CustomTemporalRelationalCodingUtils
+from relational_coding.custom_temporal_relational_coding.custom_temporal_rc_utils import \
+    CustomTemporalRelationalCodingUtils
 
 
 class SnrMeasurementsRelationalCoding(CustomTemporalRelationalCodingUtils):
-
-    @staticmethod
-    def _load_group_subjects(roi, mode, **kwargs):
-        n_subjects = kwargs.pop('group_subjects')
-        group_index = kwargs.pop('group_index')
-        group_path = config.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=group_index)
-        roi_path = os.path.join(group_path, f'{roi}.pkl')
-        df = pd.read_pickle(roi_path)
-        return df
 
     def run(self, roi: str, *args, **kwargs):
 
@@ -39,8 +29,8 @@ class SnrMeasurementsRelationalCoding(CustomTemporalRelationalCodingUtils):
             return
 
         data = {}
-        roi_data_task = self._load_group_subjects(roi=roi, mode=Mode.CLIPS, **kwargs)
-        roi_data_rest = self._load_group_subjects(roi=roi, mode=Mode.REST, **kwargs)
+        roi_data_task = self.load_group_subjects(roi=roi, mode=Mode.CLIPS, **kwargs)
+        roi_data_rest = self.load_group_subjects(roi=roi, mode=Mode.REST, **kwargs)
 
         rc_distance, roi_feature_matrix = self.custom_temporal_relational_coding(
             data_task=roi_data_task,

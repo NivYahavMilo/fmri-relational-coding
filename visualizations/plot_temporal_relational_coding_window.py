@@ -128,7 +128,7 @@ def window_relational_coding_plot(task_window, mode=None, **kwargs):
 
         w_s = 0
         w_e = 5
-        plt.plot(range(0, len(mean_roi)), mean_roi, linewidth=3)
+        plt.plot(range(0, len(mean_roi)), mean_roi, linewidth=5)
         plt.fill_between(x=range(0, len(mean_roi)),
                          y1=np.array(mean_roi) + np.array(std_roi),
                          y2=np.array(mean_roi) - np.array(std_roi),
@@ -136,7 +136,7 @@ def window_relational_coding_plot(task_window, mode=None, **kwargs):
                          alpha=0.5)
         plt.title(f"moving relational coding average window\n{roi}")
         plt.xticks(np.arange(len(rest_windows)), rest_windows, rotation=45)
-        plt.ylim([-1, 1])
+        plt.ylim([-.2, .8])
         plt.xlabel("Mean window range Value")
         fig1 = plt.gcf()
         if kwargs.get('show'):
