@@ -107,7 +107,7 @@ def get_avg_data_by_n_subject(n_subjects: int, mode: Mode, participants: list):
 def iterate_subjects_group():
 
 
-    for group in range(10,41):
+    for group in range(35,41):
         subjects_list = StaticData.SUBJECTS.copy()
         chunk = np.ceil(config.K_SUBJECTS / group)
         chunks = np.array_split(subjects_list, chunk)

@@ -33,14 +33,15 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
         custom_temporal_window_vec = {}
         for clip_i in range(1, 15):
             clip_name = self.get_clip_name_by_index(clip_i)
-            task_window_avg = self.get_task_window_slides_vectors(data_task, clip_i, init_window_task, window_size_task)
+            task_window_avg = self.get_task_window_slides_vectors(data_task, clip_i, init_window_task, window_size_task,
+                                                                  **kwargs)
             rest_window_avg = self.get_rest_window_slides_vectors(data_rest, clip_i, window_size_rest,
                                                                   clip_data=data_task)
             custom_temporal_window_vec[clip_name + '_task'] = task_window_avg
             custom_temporal_window_vec[clip_name + '_rest'] = rest_window_avg
 
         if kwargs.get('skip_correlation'):
-            return pd.DataFrame(custom_temporal_window_vec)
+            return None, pd.DataFrame(custom_temporal_window_vec)
 
         rc_distance, _ = self.correlate_current_timepoint(data=custom_temporal_window_vec, **kwargs)
 
@@ -100,7 +101,7 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
         return rest_window_avg_z
 
     @staticmethod
-    def get_task_window_slides_vectors(data_task, clip_i, init_window, window_size_task):
+    def get_task_window_slides_vectors(data_task, clip_i, init_window, window_size_task, **kwargs):
         drop_columns = []
 
         clip_ct = data_task[(data_task['y'] == clip_i)]
@@ -109,13 +110,22 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
             init_timepoint = clip_ct['timepoint'].min()
             clip_window = range(init_timepoint, window_size_task)
 
-        elif init_window == 'end':
+        elif init_window in ('end', 'shuffle'):
             init_timepoint = clip_ct['timepoint'].max()
             clip_window = range(init_timepoint - window_size_task + 1, init_timepoint + 1)
 
         elif init_window == 'middle':
             init_timepoint = clip_ct['timepoint'].min() + (clip_ct['timepoint'].max() - clip_ct['timepoint'].min()) // 2
             clip_window = range(init_timepoint - window_size_task // 2, init_timepoint + window_size_task // 2)
+
+        elif init_window == 'dynamic':
+            s, e = kwargs.pop('window_range')
+            clip_window = range(s, e)
+
+        elif init_window == 'moving_window_from_end':
+            init_timepoint = clip_ct['timepoint'].max() - kwargs.get('window_moving_size')
+            clip_window = range(init_timepoint - window_size_task + 1, init_timepoint + 1)
+
 
         else:
             raise ValueError('init_window value wrong')

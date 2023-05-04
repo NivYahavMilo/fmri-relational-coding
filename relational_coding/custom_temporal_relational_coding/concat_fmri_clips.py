@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 import config
+from arithmetic_operations.correlation_and_standartization import z_score
 from data_normalizer import utils
 from enums import Mode
 from relational_coding.custom_temporal_relational_coding.custom_temporal_rc_utils import \
@@ -12,27 +13,37 @@ from relational_coding.custom_temporal_relational_coding.custom_temporal_rc_util
 
 class ConcatFmriTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
 
-    @staticmethod
-    def _correlate_concatenated_signals(tr_signals_df):
+    def _correlate_concatenated_signals(self, tr_signals_df, **kwargs):
         N_VECTORS = 28
-        clips = tr_signals_df.iloc[:, :N_VECTORS:2]
-        rest = tr_signals_df.iloc[:, 1:N_VECTORS:2]
+
+        if kwargs.get('shuffle'):
+            tr_signals_df = self.shuffle_rest_vectors(tr_signals_df)
+            clips = tr_signals_df.iloc[:, :N_VECTORS // 2]
+            rest = tr_signals_df.iloc[:, N_VECTORS // 2:]
+
+        else:
+            clips = tr_signals_df.iloc[:, :N_VECTORS:2]
+            rest = tr_signals_df.iloc[:, 1:N_VECTORS:2]
 
         concat_clips = np.concatenate(clips.values)
         concat_rests = np.concatenate(rest.values)
 
-        df_concatenated_signals = pd.DataFrame({'concat_clip': concat_clips, 'concat_rest': concat_rests})
+        concat_clips_z = z_score(concat_clips)
+        concat_rests_z = z_score(concat_rests)
+
+        df_concatenated_signals = pd.DataFrame({'concat_clip': concat_clips_z, 'concat_rest': concat_rests_z})
         df_corr = df_concatenated_signals.corr()
         distance = round(df_corr.loc['concat_clip'].at['concat_rest'], 3)
 
         return distance, df_concatenated_signals
 
-    def run(self, roi: str, *args, **kwargs):
+    def average_data_flow(self, roi, **kwargs):
         init_window_task = kwargs.pop('init_window')
         ws_task = kwargs.pop('task_ws')
         ws_rest = kwargs.pop('rest_ws')
+        clip_window = kwargs.get('window_range', '')
 
-        _range = f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr'
+        _range = f'task_{init_window_task}{clip_window[0]}-{clip_window[1]}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr'
 
         output_dir = config.CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG.format(
             range=_range,
@@ -50,18 +61,35 @@ class ConcatFmriTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
         roi_data_task = self.load_group_subjects(roi=roi, mode=Mode.CLIPS, **kwargs)
         roi_data_rest = self.load_group_subjects(roi=roi, mode=Mode.REST, **kwargs)
 
-        tr_vectors_df = self.custom_temporal_relational_coding(
+        _, tr_vectors_df = self.custom_temporal_relational_coding(
             data_task=roi_data_task,
             data_rest=roi_data_rest,
             window_size_rest=ws_rest,
             init_window_task=init_window_task,
             window_size_task=ws_task,
-            skip_correlation=True,
             **kwargs
         )
 
-        distance, concat_signals = self._correlate_concatenated_signals(tr_signals_df=tr_vectors_df)
+        if kwargs.get('skip_correlation'):
+            distance, concat_signals = self._correlate_concatenated_signals(tr_vectors_df, **kwargs)
+            activation_values = {'activation_pattern': distance, 'concat_signals': concat_signals}
 
-        activation_values = {'activation_pattern': distance, 'concat_signals': concat_signals}
+
+        else:
+            results = {}
+            for i in range(0, 28, 2):
+                clip_rest_pair = tr_vectors_df.iloc[:, i:i + 2]
+                corr = clip_rest_pair.corr()
+                clip_name = corr.columns.tolist()[0].replace('_task', '')
+                distance = round(corr.loc[f'{clip_name}_task'].at[f'{clip_name}_rest'], 3)
+                results[clip_name] = distance
+
+            avg_movies = pd.DataFrame.from_dict([results]).values[0].mean()
+
+            activation_values = {'activation_pattern_movie_average': avg_movies, 'all_movies': results}
 
         utils.dict_to_pkl(activation_values, save_path.replace('.pkl', ''))
+
+    def run(self, roi: str, *args, **kwargs):
+
+        self.average_data_flow(roi, **kwargs)

@@ -10,6 +10,7 @@ TIMING_FILES = os.path.join(ROOT_PATH, 'data_center', 'timing_files')
 """ External Data Source path """
 RAW_DATA = os.path.join(r'E:', 'S1200', '7T_{mode}')
 DATA_DRIVE_E = os.path.join(r'E:', 'parcelled_data_niv')
+RESULTS_DIR = os.path.join(r'E:', 'fmri-relational-coding-results')
 VOXEL_DATA = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL')
 VOXEL_DATA_DF = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_{mode}_DF')
 SUBNET_DATA_DF = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_{mode}_DF')
@@ -18,16 +19,18 @@ SUBJECTS_AVG_DATA_LEAVE_ONE_OUT = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNE
 SUBNET_AVG_N_SUBJECTS = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_AVG_N_SUBJECTS_{mode}', 'AVG_{n_subjects}_SUBJECTS', 'GROUP_{group_i}')
 
 """ Results paths """
-ACTIVATIONS_PATTERN = os.path.join(ROOT_PATH, 'results', 'activations_patterns')
-RELATIONAL_CODING = os.path.join(ROOT_PATH, 'results', 'relational_coding')
+ACTIVATIONS_PATTERN = os.path.join(RESULTS_DIR, 'activations_patterns')
+RELATIONAL_CODING = os.path.join(RESULTS_DIR, 'relational_coding')
 
 FMRI_ACTIVATIONS_PATTERN_RESULTS = os.path.join(ACTIVATIONS_PATTERN, 'activations_patterns')
 FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG = os.path.join(ACTIVATIONS_PATTERN, 'activations_patterns{group}')
 FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES = os.path.join(ACTIVATIONS_PATTERN, 'activations_patterns_figures{group}')
 
-CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS = os.path.join(ACTIVATIONS_PATTERN, 'concat_signals')
-CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG = os.path.join(CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS, '{group_amount}_subjects_average', 'group_{group_index}', '{range}')
-CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES = os.path.join(CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS, 'activations_patterns_figures{group}')
+CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_SUBJECT = os.path.join(ACTIVATIONS_PATTERN, 'concat_signals')
+CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_ = os.path.join(ACTIVATIONS_PATTERN, 'concat_signals_avg')
+CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_SINGLE = os.path.join(CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_SUBJECT, '{range}')
+CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG = os.path.join(CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_, '{group_amount}_subjects_average', 'group_{group_index}', '{range}')
+CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES = os.path.join(CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_, 'activations_patterns_figures{group}')
 
 
 FMRI_RELATION_CODING_RESULTS = os.path.join(RELATIONAL_CODING,'relational_coding')
@@ -55,6 +58,12 @@ ISFC_RELATIONAL_CODING_RESULTS_FIGURES = os.path.join(RELATIONAL_CODING, 'isfc_r
 
 SNR_RELATIONAL_CODING_RESULTS = os.path.join(RELATIONAL_CODING, 'snr_relational_coding','{group_amount}_subjects_average', 'group_{group_index}', '{range}')
 SNR_RELATIONAL_CODING_RESULTS_FIGURES = os.path.join(RELATIONAL_CODING, 'snr_relational_coding', 'snr_relational_coding_figures', 'group_{group_index}')
+
+
+ARTICLE_FIGURES_PATH = os.path.join(RESULTS_DIR, 'figures')
+ARTICLE_FIGURES_PATH_ACTIVATIONS = os.path.join(ARTICLE_FIGURES_PATH, 'activations')
+ARTICLE_FIGURES_PATH_CORRELATIONS = os.path.join(ARTICLE_FIGURES_PATH, 'correlations')
+
 
 K_GRAYORIDNATES = 59412
 

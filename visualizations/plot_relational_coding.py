@@ -28,10 +28,11 @@ def plot_error_bar(data, roi, group='', save_img=None):
         plt.errorbar([*range(19)], data)
     else:
         plt.errorbar([*range(19)], data['mean'], data['std'], linewidth=6)
-    plt.title(f"ISFC Mean and Standard deviation of {roi} {group}")
+    plt.title(f"Activation Pattern Mean and Standard deviation of {roi} {group}")
     plt.xlabel("Rest TR")
     plt.ylabel("Correlation Value")
     fig1 = plt.gcf()
+    plt.show()
 
     if save_img:
         if not save_img.endswith('.png'):

@@ -35,5 +35,5 @@ class FlowType(Enum):
     CONCATENATED_FMRI = auto()
 
 class AnalysisType(Enum):
-    RELATIONAL_CODING = auto()
-    ACTIVATIONS_PATTERNS = auto()
+    RELATIONAL_CODING = 'Correlations'
+    ACTIVATIONS_PATTERNS = 'Activations'

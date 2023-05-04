@@ -175,9 +175,10 @@ def snr_measurement(**kwargs):
 
     elif not rois:
         rois = StaticData.ROI_NAMES
-    for init_window in ['start', 'middle', 'end']:
+
+    for init_window in ['dynamic']:
         for group_index in [1, 2, 3, 4, 5, 6]:
-            for group in range(25, 36):
+            for group in range(34, 36):
                 task_ws = 10
                 rest_s, rest_e = (0, 5)
                 while rest_e < 19:
@@ -189,10 +190,14 @@ def snr_measurement(**kwargs):
                             roi=roi,
                             rest_ws=rest_ws,
                             init_window=init_window,
+                            window_moving_size=10,
+                            window_range=(10,20),
                             task_ws=task_ws,
                             group_index=group_index,
                             group_subjects=group,
-                            flow_type=FlowType.CONCATENATED_FMRI
+                            skip_correlation=False,
+                            shuffle_rest=False,
+                            flow_type=FlowType.SNR_MEASUREMENTS
                         )
                     del fm
                     rest_s += 1
@@ -248,7 +253,7 @@ if __name__ == '__main__':
     # )
     # isfc_relational_coding(with_plot=1)
     snr_measurement()
-
+    # activations_pattern_for_specific_roi(roi='RH_Default_pCunPCC_1', group='_GROUP2', with_plot=True)
     # moving_window_custom_temporal_relational_coding(
     #     # roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'],
     #     average_data=True,

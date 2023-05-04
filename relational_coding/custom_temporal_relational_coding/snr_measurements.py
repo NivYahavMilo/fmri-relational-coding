@@ -42,5 +42,5 @@ class SnrMeasurementsRelationalCoding(CustomTemporalRelationalCodingUtils):
         )
 
         data['relational_coding_distance'] = rc_distance
-        data['feature_matrix'] = roi_feature_matrix
+        # data['feature_matrix'] = roi_feature_matrix
         utils.dict_to_pkl(data, save_path.replace('.pkl', ''))
