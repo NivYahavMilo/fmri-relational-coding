@@ -53,25 +53,28 @@ class Voxel2Roi:
         masked_roi = data.loc[:, voxel_indices]
         return masked_roi
 
-    def _save_roi_file(self, data: pd.DataFrame, roi_name: str, subject: str):
+    def _save_roi_file(self, data: pd.DataFrame, roi_name: str, subject: str, save_path: str):
         """
         Checks if directories exists, if not saves all  ROI files to subject directory.
         mode in-charge of the navigation between resting state and task.
         """
+
         roi_name = roi_name.replace('7Networks_', '')
-        sub_path = os.path.join(config.SUBNET_DATA_DF.format(mode=self.mode.value), subject)
+        sub_path = os.path.join(save_path, subject)
         if not os.path.exists(sub_path):
             os.makedirs(sub_path)
 
         file_name = os.path.join(sub_path, f"{roi_name}.pkl")
         data.to_pickle(file_name)
 
-    def load_data_per_subject(self):
+    def load_data_per_subject(self, mode: Mode, **kwargs):
         """
         Iterates subjects and retrieves the voxels per region of interest (ROI)
         save results to pkl file.
         """
-        subjects_voxel_data = glob.glob(os.path.join(config.VOXEL_DATA_DF.format(mode=self.mode.value), '*.pkl'))
+        load_dir_path = kwargs['load_path'].format(mode=mode.value)
+        save_dir_path = kwargs['save_path'].format(mode=mode.value)
+        subjects_voxel_data = glob.glob(os.path.join(load_dir_path, '*.pkl'))
 
         for sub_file in subjects_voxel_data:
             # slice string for subject id
@@ -81,9 +84,10 @@ class Voxel2Roi:
             ROIS = self.network_mapping['ROI Name'].unique()
             for r in ROIS:
                 roi_data = self._get_voxels_by_roi(data=sub_data, roi=r)
-                self._save_roi_file(data=roi_data, roi_name=r, subject=sub_id)
+                self._save_roi_file(data=roi_data, roi_name=r, subject=sub_id, save_path=save_dir_path)
             utils.info(f"Subject {sub_id} saved")
 
-    def flow(self):
+    def flow(self, *args, **kwargs):
+        mode: Mode = args[0]
         self.load_voxel_mapping_file(roi=300, nw=7)
-        self.load_data_per_subject()
+        self.load_data_per_subject(mode, **kwargs)

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def z_score(seq: np.array) -> np.array:
+def z_score(seq: np.array, axis: int) -> np.array:
     """
     Computes the Z-score normalization of a given sequence.
 
@@ -13,7 +13,7 @@ def z_score(seq: np.array) -> np.array:
     numpy array: Normalized sequence.
     """
     # Compute the Z-score normalization
-    seq = (1 / np.std(seq)) * (seq - np.mean(seq))
+    seq = (1 / np.std(seq, axis=axis)) * (seq - np.mean(seq, axis=axis))
     return seq
 
 
@@ -47,6 +47,6 @@ def ssmd(x_mean, x_std, y_mean, y_std):
     for a, b, c, d in zip(x_mean, y_mean, x_std, y_std):
         mean_diff = a - b
         pooled_std = np.sqrt(c ** 2 + d ** 2)
-        ssmd_value = mean_diff / pooled_std
+        ssmd_value = mean_diff #/ pooled_std
         ssmd_score += ssmd_value
     return ssmd_score

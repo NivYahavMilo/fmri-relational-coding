@@ -34,7 +34,7 @@ class ParcelData:
         return z_ts
 
     @classmethod
-    def _get_roi_ts(cls, path, parcel):
+    def _get_roi_ts(cls, path, parcel, z_score):
         '''
         path: path to cifti time series
         parcel: grayordinate -> roi map
@@ -49,12 +49,13 @@ class ParcelData:
         ts = ts[:, :parcel.shape[0]]
 
         # zscore ts
-        z_ts = cls._zscore_ts(ts)  # time x grayordinate
-        t = z_ts.shape[0]
+        if z_score:
+            ts = cls._zscore_ts(ts)  # time x grayordinate
+        t = ts.shape[0]
 
         roi_ts = np.zeros((t, config.K_GRAYORIDNATES))
         for ii in range(config.K_GRAYORIDNATES):
-            roi_ts[:, ii] = z_ts[:, ii]
+            roi_ts[:, ii] = ts[:, ii]
 
         return roi_ts
 
@@ -92,7 +93,7 @@ class ParcelData:
                 utils.info('%s: %d/%d' % (ID, (ii + 1), len(participants)))
                 ID_ts, t = [], []
                 for path in ID_files:
-                    roi_ts = cls._get_roi_ts(path, parcel)
+                    roi_ts = cls._get_roi_ts(path, parcel, z_score=kwargs['z_score'])
                     ID_ts.append(roi_ts)
                     t.append(roi_ts.shape[0])
                 k_time = np.max(t)
@@ -109,16 +110,14 @@ class ParcelData:
                     save_ts[:t, :, run] = run_ts
 
                 data[ID] = save_ts
-                SAVE_DIR = config.VOXEL_DATA
+                SAVE_DIR = kwargs['save_path']
                 if not os.path.exists(SAVE_DIR):
                     os.makedirs(SAVE_DIR)
 
-                save_path = os.path.join(SAVE_DIR,
-                             'data_MOVIE_runs_voxel_%d_ts_subject_%s.pkl' % (config.K_GRAYORIDNATES, ID))
+                save_path = os.path.join(SAVE_DIR, 'data_4_runs_voxel_%d_ts_subject_%s.pkl' % (config.K_GRAYORIDNATES, ID))
                 with open(save_path, 'wb') as f:
                     pickle.dump(data, f)
                 del data, save_ts
 
             else:
                 utils.info('%s not processed' % ID)
-

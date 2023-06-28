@@ -20,21 +20,21 @@ def _load(sub, roi, mode):
 
 
 def get_subjects_average_roi_matrix():
-    mid_i = len(StaticData.SUBJECTS) // 2
-    group1 = StaticData.SUBJECTS[:mid_i]
-    group2 = StaticData.SUBJECTS[mid_i:]
+    # mid_i = len(StaticData.SUBJECTS) // 2
 
     for roi in StaticData.ROI_NAMES:
-        save_path_rest = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.REST.value,
-                                                                    group='_GROUP2'), f'{roi}')
-        save_path_task = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.CLIPS.value,
-                                                                    group='_GROUP2'), f'{roi}')
+        save_path_rest = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.RESTING_STATE_REST.value,
+                                                                    group=''), f'{roi}')
+        save_path_task = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.RESTING_STATE_TASK.value,
+                                                                    group=''), f'{roi}')
         task = []
         rest = []
         drop = ['timepoint', 'Subject', 'y']
-        for sub_id in group2:
-            roi_sub_data_task = _load(roi=roi, sub=sub_id, mode=Mode.CLIPS)
-            roi_sub_data_rest = _load(roi=roi, sub=sub_id, mode=Mode.REST)
+        resting_state_subject = StaticData.SUBJECTS.copy()
+        resting_state_subject.remove('111312')
+        for sub_id in resting_state_subject:
+            roi_sub_data_task = _load(roi=roi, sub=sub_id, mode=Mode.RESTING_STATE_TASK.value)
+            roi_sub_data_rest = _load(roi=roi, sub=sub_id, mode=Mode.RESTING_STATE_REST.value)
             roi_sub_data_task_d = roi_sub_data_task.drop(drop, axis=1)
             roi_sub_data_rest_d = roi_sub_data_rest.drop(drop, axis=1)
             task.append(roi_sub_data_task_d.values)
@@ -106,13 +106,15 @@ def get_avg_data_by_n_subject(n_subjects: int, mode: Mode, participants: list):
 
 def iterate_subjects_group():
 
+    group = 30
+    # subjects_list = StaticData.SUBJECTS.copy()
+    resting_state_subjects = StaticData.SUBJECTS.copy()
+    chunk = np.ceil(config.K_SUBJECTS / group)
+    chunks = np.array_split(resting_state_subjects, chunk)
+    get_avg_data_by_n_subject(n_subjects=group, mode=Mode.RESTING_STATE_TASK, participants=chunks)
+    get_avg_data_by_n_subject(n_subjects=group, mode=Mode.RESTING_STATE_REST, participants=chunks)
 
-    for group in range(35,41):
-        subjects_list = StaticData.SUBJECTS.copy()
-        chunk = np.ceil(config.K_SUBJECTS / group)
-        chunks = np.array_split(subjects_list, chunk)
-        [get_avg_data_by_n_subject(n_subjects=group, mode=m, participants=chunks) for m in Mode]
-        print('Done group', group)
+    print('Done group', group)
 
 
 if __name__ == '__main__':

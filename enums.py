@@ -1,9 +1,16 @@
 from enum import Enum, auto
 
+class ScanningMode(Enum):
+    REST = 'rest'
+    TASK = 'task'
+
 
 class Mode(Enum):
     CLIPS = 'TASK'
     REST = 'REST'
+    RESTING_STATE_TASK = 'RESTING_STATE_TASK'
+    RESTING_STATE_REST = 'RESTING_STATE_REST'
+
 
 
 class Network(Enum):
@@ -26,6 +33,7 @@ class FlowType(Enum):
     ROI_TO_NETWORK = auto()
     VOXEL_TO_ROI = auto()
     RAW_TO_TABULAR = auto()
+    VOXEL_EXTRACTION = auto()
     RELATIONAL_CODING = auto()
     ACTIVATIONS_PATTERNS = auto()
     SINGULAR_RELATIONAL_CODING = auto()
@@ -36,4 +44,10 @@ class FlowType(Enum):
 
 class AnalysisType(Enum):
     RELATIONAL_CODING = 'Correlations'
+    RESTING_STATE_RELATIONAL_CODING = 'Resting State Correlations'
+    RESTING_STATE_ACTIVATIONS_PATTERNS = 'Resting State Activations'
     ACTIVATIONS_PATTERNS = 'Activations'
+    SINGLE_MOVIE_ACTIVATION = 'Single Movie Activation'
+    MOVIE_DISTANCES = 'Movie Distances'
+
+

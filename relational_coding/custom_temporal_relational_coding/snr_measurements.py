@@ -15,7 +15,7 @@ class SnrMeasurementsRelationalCoding(CustomTemporalRelationalCodingUtils):
         ws_task = kwargs.pop('task_ws')
         ws_rest = kwargs.pop('rest_ws')
 
-        output_dir = config.SNR_RELATIONAL_CODING_RESULTS.format(
+        output_dir = config.MOVIE_DISTANCES_CORRELATION_ANALYSIS.format(
             range=f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr',
             group_amount=kwargs['group_subjects'],
             group_index=kwargs['group_index']
@@ -25,8 +25,8 @@ class SnrMeasurementsRelationalCoding(CustomTemporalRelationalCodingUtils):
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        if os.path.isfile(save_path):
-            return
+        # if os.path.isfile(save_path):
+        #     return
 
         data = {}
         roi_data_task = self.load_group_subjects(roi=roi, mode=Mode.CLIPS, **kwargs)

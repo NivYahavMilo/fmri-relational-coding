@@ -96,9 +96,9 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
             rest_ct_window = pd.concat([rest_ct_window, extra_clip_window])
 
         rest_window_avg = np.mean(rest_ct_window.values, axis=0)
-        rest_window_avg_z = z_score(rest_window_avg)
+        # rest_window_avg_z = z_score(rest_window_avg, axis=0)
 
-        return rest_window_avg_z
+        return rest_window_avg
 
     @staticmethod
     def get_task_window_slides_vectors(data_task, clip_i, init_window, window_size_task, **kwargs):
@@ -136,6 +136,6 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
 
         clip_ct_window = clip_ct[clip_ct['timepoint'].isin(clip_window)].drop(drop_columns, axis=1)
         task_window_avg = np.mean(clip_ct_window.values, axis=0)
-        task_window_avg_z = z_score(task_window_avg)
+        # task_window_avg_z = z_score(task_window_avg, axis=0)
 
-        return task_window_avg_z
+        return task_window_avg

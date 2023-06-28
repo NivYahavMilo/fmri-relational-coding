@@ -9,6 +9,7 @@ import config
 from arithmetic_operations.matrix_op import MatrixOperations
 from arithmetic_operations.signal_processing import SignalProcessing
 from arithmetic_operations.decomposition import Decomposition
+from arithmetic_operations import distances_utils
 from data_center.static_data.static_data import StaticData
 from enums import Mode
 
@@ -30,6 +31,10 @@ class RelationalCodingBase:
 
         if kwargs.get('decomposition'):
             df = Decomposition.reduce_dimensions(df, n_components=0.1)
+
+        if kwargs.get('movie_distances'):
+            df = distances_utils.create_distances_movies_vector(df)
+
         df_corr = df.corr()
 
         rest_cor = df_corr.iloc[len(df_corr) // 2:, len(df_corr) // 2:]

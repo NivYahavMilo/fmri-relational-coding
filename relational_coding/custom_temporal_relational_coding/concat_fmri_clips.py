@@ -16,7 +16,7 @@ class ConcatFmriTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
     def _correlate_concatenated_signals(self, tr_signals_df, **kwargs):
         N_VECTORS = 28
 
-        if kwargs.get('shuffle'):
+        if kwargs.get('shuffle_rest'):
             tr_signals_df = self.shuffle_rest_vectors(tr_signals_df)
             clips = tr_signals_df.iloc[:, :N_VECTORS // 2]
             rest = tr_signals_df.iloc[:, N_VECTORS // 2:]
@@ -41,20 +41,21 @@ class ConcatFmriTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
         init_window_task = kwargs.pop('init_window')
         ws_task = kwargs.pop('task_ws')
         ws_rest = kwargs.pop('rest_ws')
-        clip_window = kwargs.get('window_range', '')
+        clip_window = kwargs.get('window_range', ('', ''))
+        single_movie_activation = kwargs.pop('movie_activation', False)
 
-        _range = f'task_{init_window_task}{clip_window[0]}-{clip_window[1]}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr'
+        _range = f'task_{init_window_task}{clip_window[0]}{clip_window[1]}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr'
 
-        output_dir = config.CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG.format(
+        output_dir = config.FMRI_SINGLE_MOVIE_ACTIVATIONS_PATTERN_RESULTS.format(
             range=_range,
             group_amount=kwargs['group_subjects'],
             group_index=kwargs['group_index']
         )
-        save_path = os.path.join(output_dir, f"{roi}.pkl")
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
+        save_path = os.path.join(output_dir, f"{roi}.pkl")
         if os.path.isfile(save_path):
             return
 
@@ -70,23 +71,19 @@ class ConcatFmriTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
             **kwargs
         )
 
-        if kwargs.get('skip_correlation'):
-            distance, concat_signals = self._correlate_concatenated_signals(tr_vectors_df, **kwargs)
-            activation_values = {'activation_pattern': distance, 'concat_signals': concat_signals}
-
-
-        else:
-            results = {}
+        if single_movie_activation:
+            activation_values = {}
             for i in range(0, 28, 2):
                 clip_rest_pair = tr_vectors_df.iloc[:, i:i + 2]
                 corr = clip_rest_pair.corr()
                 clip_name = corr.columns.tolist()[0].replace('_task', '')
                 distance = round(corr.loc[f'{clip_name}_task'].at[f'{clip_name}_rest'], 3)
-                results[clip_name] = distance
+                activation_values[clip_name] = distance
 
-            avg_movies = pd.DataFrame.from_dict([results]).values[0].mean()
 
-            activation_values = {'activation_pattern_movie_average': avg_movies, 'all_movies': results}
+        else:
+            distance, concat_signals = self._correlate_concatenated_signals(tr_vectors_df, **kwargs)
+            activation_values = {'activation_pattern': distance, 'concat_signals': concat_signals}
 
         utils.dict_to_pkl(activation_values, save_path.replace('.pkl', ''))
 

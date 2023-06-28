@@ -10,49 +10,9 @@ import config
 from arithmetic_operations.correlation_and_standartization import ssmd
 from data_center.static_data.static_data import StaticData
 from enums import AnalysisType
+from visualizations.viusalization_utils import gather_dynamic_correlation_by_window, RESULTS_DIR
 
 StaticData.inhabit_class_members()
-
-RESULTS_DIR = {
-    AnalysisType.ACTIVATIONS_PATTERNS: config.CONCAT_FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG,
-    AnalysisType.RELATIONAL_CODING: config.SNR_RELATIONAL_CODING_RESULTS
-}
-
-
-def gather_dynamic_correlation_by_window(
-        n_subjects: int,
-        groups: iter,
-        roi: str,
-        init_window: str,
-        init_window_start: int,
-        init_window_end: int,
-        analysis_mode: AnalysisType
-):
-    global RESULTS_DIR
-    results_path = RESULTS_DIR.get(analysis_mode)
-
-    groups_dict = {}
-    for group in groups:
-
-        task_range = 10
-        w_s = init_window_start
-        w_e = init_window_end
-
-        rc_score = {}
-        while w_e < 19:
-            _range = f'task_{init_window}_{task_range}_tr_rest_{w_s}-{w_e}_tr'
-            res_path = results_path.format(group_amount=n_subjects, group_index=group, range=_range)
-            roi_path = os.path.join(res_path, f"{roi}.pkl")
-            data = pd.read_pickle(roi_path)
-            data_key = 'relational_coding_distance' if analysis_mode == AnalysisType.RELATIONAL_CODING else 'activation_pattern'
-            rc_score[f'{w_s}-{w_e}'] = data[data_key]
-
-            w_s += 1
-            w_e += 1
-
-        groups_dict[group] = rc_score
-
-    return groups_dict
 
 
 def plot_groups_roi_dynamic(**kwargs):
@@ -88,13 +48,15 @@ def plot_mean_and_error_bar_of_group_dynamic(**kwargs):
     if with_shuffle:
         _, mean_shuffle, std_shuffle = add_shuffle(**kwargs)
 
+    correlation_values = kwargs.pop('dynamic_size')
     groups_results = gather_dynamic_correlation_by_window(**kwargs)
-    correlation_values = 14
+
     y = np.zeros(shape=(correlation_values, len(groups_results)))
     for group_index, dynamic_dict in groups_results.items():
         y[:, group_index - 1] = [*dynamic_dict.values()]
         x_ticks = [*dynamic_dict.keys()]
 
+    y = np.nan_to_num(y)
     mean_dynamic = y.mean(axis=1)
     std_dynamic = y.std(axis=1, ddof=1) / np.sqrt(y.shape[1])
 
@@ -130,11 +92,10 @@ def plot_mean_and_error_bar_of_group_dynamic(**kwargs):
         fig.savefig(save_fig_path, dpi=300)
 
 
-def add_shuffle(**kwargs):
+def add_shuffle(dynamic_size: int, **kwargs):
     kwargs['init_window'] = 'shuffle'
     group_res = gather_dynamic_correlation_by_window(**kwargs)
-    correlation_values = 11
-    y = np.zeros(shape=(correlation_values, len(group_res)))
+    y = np.zeros(shape=(dynamic_size, len(group_res)))
     for group_index, dynamic_dict in group_res.items():
         y[:, group_index - 1] = [*dynamic_dict.values()]
 
@@ -164,15 +125,15 @@ def create_bar_plot_with_ssdm_measurement(**kwargs):
     roi_to_net = {}
     ssmd_results = {}
     with_shuffle = kwargs.pop('add_noise', False)
+    dynamic_size = kwargs.pop('dynamic_size')
     for roi in StaticData.ROI_NAMES:
         kwargs['roi'] = roi
 
         if with_shuffle:
-            y_shuffle, mean_shuffle, std_shuffle = add_shuffle(**kwargs)
+            y_shuffle, mean_shuffle, std_shuffle = add_shuffle(dynamic_size, **kwargs)
 
         groups_results = gather_dynamic_correlation_by_window(**kwargs)
-        correlation_values = 11
-        y = np.zeros(shape=(correlation_values, len(groups_results)))
+        y = np.zeros(shape=(dynamic_size, len(groups_results)))
         for group_index, dynamic_dict in groups_results.items():
             y[:, group_index - 1] = [*dynamic_dict.values()]
 
@@ -241,36 +202,41 @@ def create_bar_plot_with_ssdm_measurement(**kwargs):
 
 
 if __name__ == '__main__':
-    # for roi in StaticData.ROI_NAMES:
-    #     plot_mean_and_error_bar_of_group_dynamic(
-    #         roi=roi,
-    #         n_subjects='35',
-    #         groups=range(1, 7),
-    #         init_window='dynamic10-20',
-    #         add_noise=True,
-    #         analysis_mode=AnalysisType.ACTIVATIONS_PATTERNS,
-    #         figures_path=config.ARTICLE_FIGURES_PATH_ACTIVATIONS
-    # #     )
-    # for window in ['end', 'dynamic', 'start', 'middle']:
+    #     for roi in StaticData.ROI_NAMES:
+    #         plot_groups_roi_dynamic(
+    #             roi=roi,
+    #             n_subjects='35',
+    #             groups=range(1, 7),
+    #             init_window='end',
+    #             init_window_start=0,
+    #             init_window_end=5,
+    #             analysis_mode=AnalysisType.RESTING_STATE_RELATIONAL_CODING
+    #             # figures_path=config.SNR_RESTING_STATE_RELATIONAL_CODING_RESULTS_FIGURES
+    #         )
+    for roi in StaticData.ROI_NAMES:
+        plot_mean_and_error_bar_of_group_dynamic(
+            roi='RH_DorsAttn_Post_2',
+            n_subjects='35',
+            groups=range(1, 7),
+            init_window='end',
+            init_window_start=0,
+            init_window_end=5,
+            dynamic_size=14,
+            add_noise=False,
+            analysis_mode=AnalysisType.MOVIE_DISTANCES,
+            figures_path=''
+        )
+        break
+
+    # for window in ['end', 'start', 'middle']:
     #     create_bar_plot_with_ssdm_measurement(
     #         n_subjects='35',
     #         groups=range(1, 7),
     #         init_window=window,
-    #         init_window_start=3,
-    #         init_window_end=8,
+    #         init_window_start=2,
+    #         init_window_end=7,
+    #         dynamic_size=12,
     #         add_noise=True,
-    #         analysis_mode=AnalysisType.RELATIONAL_CODING,
-    #         # figures_path=config.ARTICLE_FIGURES_PATH_CORRELATIONS
-    #     )
+    #         analysis_mode=AnalysisType.RELATIONAL_CODING
 
-    for window in ['dynamic10-20', 'end', 'start', 'middle', ]:
-        create_bar_plot_with_ssdm_measurement(
-            n_subjects='35',
-            groups=range(1, 7),
-            init_window=window,
-            init_window_start=3,
-            init_window_end=8,
-            add_noise=True,
-            analysis_mode=AnalysisType.ACTIVATIONS_PATTERNS,
-            # figures_path=config.ARTICLE_FIGURES_PATH_CORRELATIONS
-        )
+    # figures_path=config.ARTICLE_FIGURES_PATH_CORRELATIONS

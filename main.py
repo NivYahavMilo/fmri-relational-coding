@@ -176,32 +176,33 @@ def snr_measurement(**kwargs):
     elif not rois:
         rois = StaticData.ROI_NAMES
 
-    for init_window in ['dynamic']:
+    for init_window in ['end']:
         for group_index in [1, 2, 3, 4, 5, 6]:
-            for group in range(34, 36):
-                task_ws = 10
-                rest_s, rest_e = (0, 5)
-                while rest_e < 19:
-                    rest_ws = rest_s, rest_e
-                    for roi in rois:
-                        fm = FlowManager()
-                        fm.execute(
-                            DataType.FMRI,
-                            roi=roi,
-                            rest_ws=rest_ws,
-                            init_window=init_window,
-                            window_moving_size=10,
-                            window_range=(10,20),
-                            task_ws=task_ws,
-                            group_index=group_index,
-                            group_subjects=group,
-                            skip_correlation=False,
-                            shuffle_rest=False,
-                            flow_type=FlowType.SNR_MEASUREMENTS
+            task_ws = 10
+            rest_s, rest_e = (0, 5)
+            while rest_e < 19:
+                rest_ws = rest_s, rest_e
+                for roi in rois:
+                    fm = FlowManager()
+                    fm.execute(
+                        DataType.FMRI,
+                        roi=roi,
+                        rest_ws=rest_ws,
+                        init_window=init_window,
+                        window_moving_size=10,
+                        # window_range=(10,20),
+                        task_ws=task_ws,
+                        group_index=group_index,
+                        group_subjects=35,
+                        skip_correlation=False,
+                        movie_distances=True,
+                        movie_activation=False,
+                        shuffle_rest=False,
+                        flow_type=FlowType.SNR_MEASUREMENTS
                         )
-                    del fm
-                    rest_s += 1
-                    rest_e += 1
+                del fm
+                rest_s += 1
+                rest_e += 1
 
 
 
@@ -220,7 +221,7 @@ def snr_measurement(**kwargs):
 
 
 if __name__ == '__main__':
-    # relation_coding_for_specific_roi("RH_SomMot_6", avg_data=False, with_plot=True)
+    # relation_coding_for_specific_roi()
     # relation_coding_for_all_roi(avg_data=True, with_plot=True, group='_GROUP2')
     # relation_coding_for_all_roi(avg_data=True, with_plot=True, group='_GROUP1')
     # activations_pattern_for_specific_roi('RH_Default_pCunPCC_6', group='_GROUP2', with_plot=True)
@@ -252,8 +253,8 @@ if __name__ == '__main__':
     #     with_plot=True
     # )
     # isfc_relational_coding(with_plot=1)
-    snr_measurement()
-    # activations_pattern_for_specific_roi(roi='RH_Default_pCunPCC_1', group='_GROUP2', with_plot=True)
+    snr_measurement(roi='RH_DorsAttn_Post_2')
+    #     # activations_pattern_for_specific_roi(roi='RH_Default_pCunPCC_1', group='_GROUP2', with_plot=True)
     # moving_window_custom_temporal_relational_coding(
     #     # roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'],
     #     average_data=True,

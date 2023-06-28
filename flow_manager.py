@@ -3,6 +3,7 @@ from typing import Callable
 from activtions_patterns.fmri_activations_pattern import FmriActivationPattern
 from data_normalizer.raw_dataloader import ParcelData
 from data_normalizer.split_wb_networks import MapRoiToNetwork
+from data_normalizer.voxel_extraction import VoxelExtraction
 from data_normalizer.voxel_to_roi import Voxel2Roi
 from enums import Mode, DataType, FlowType
 from relational_coding.artificial_relational_coding import ActivationsRelationalCoding
@@ -18,18 +19,21 @@ from relational_coding.custom_temporal_relational_coding.concat_fmri_clips impor
 class FlowManager:
 
     @classmethod
-    def _map_voxel_to_roi(cls, *args):
+    def _map_voxel_to_roi(cls, *args, **kwargs):
         mode: Mode = args[0]
         voxel_to_roi = Voxel2Roi(mode=mode)
-        voxel_to_roi.flow()
+        voxel_to_roi.flow(*args, **kwargs)
 
     @classmethod
-    def _preprocess_raw_data_to_tabular(cls, *args):
+    def _preprocess_raw_data_to_tabular(cls, *args, **kwargs):
         mode: Mode = args[0]
-        roi: int = args[1]
-        net: int = args[2]
         raw_data_parcel = ParcelData()
-        raw_data_parcel.run(mode, k_roi=roi, k_net=net)
+        raw_data_parcel.run(mode, **kwargs)
+
+    @classmethod
+    def _voxel_extraction(cls, *args, **kwargs):
+        voxel_extraction = VoxelExtraction()
+        voxel_extraction.run(*args, **kwargs)
 
     @classmethod
     def _preprocess_roi_to_networks(cls, *args):
@@ -109,6 +113,7 @@ class FlowManager:
         flow_type_mapping = {
             FlowType.ROI_TO_NETWORK: cls._preprocess_roi_to_networks,
             FlowType.RAW_TO_TABULAR: cls._preprocess_raw_data_to_tabular,
+            FlowType.VOXEL_EXTRACTION: cls._voxel_extraction,
             FlowType.VOXEL_TO_ROI: cls._map_voxel_to_roi,
             FlowType.RELATIONAL_CODING: cls._relational_coding,
             FlowType.ACTIVATIONS_PATTERNS: cls._activations_pattern,

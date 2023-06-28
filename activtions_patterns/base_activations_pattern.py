@@ -64,6 +64,15 @@ class BaseActivationPattern:
         if roi_name not in StaticData.ROI_NAMES:
             raise ValueError("ROI name incorrect\n", "check the following list:\n", StaticData.ROI_NAMES)
 
+    @staticmethod
+    def load_group_data(roi, mode, **kwargs):
+        group_index = kwargs.pop('group_index')
+        n_subjects = kwargs.pop('n_subjects')
+        group_path = config.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=group_index)
+        roi_path = os.path.join(group_path, f'{roi}.pkl')
+        df = pd.read_pickle(roi_path)
+        return df
+
     @abstractmethod
     def run(self, roi: str, *args, **kwargs):
         pass
