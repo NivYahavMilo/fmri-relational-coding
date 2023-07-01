@@ -51,7 +51,7 @@ def get_clip_labels(timing_file, k_runs: int = 4):
     clip_y = {}
     jj = 1
     for clip in clips:
-        if 'testretest' in clip:
+        if isinstance(clip, str) and 'testretest' in clip:
             clip_y[clip] = 0
         else:
             clip_y[clip] = jj

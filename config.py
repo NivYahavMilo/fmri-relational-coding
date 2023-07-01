@@ -26,6 +26,8 @@ VOXEL_DATA_DENORMALIZED = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_denorma
 VOXEL_DATA_DF_DENORMALIZED = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_{mode}_DF_denormalized')
 SUBNET_DATA_DF_DENORMALIZED = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_{mode}_DF_denormalized')
 
+
+
 """ Results paths """
 ACTIVATIONS_PATTERN = os.path.join(RESULTS_DIR, 'activations_patterns')
 RELATIONAL_CODING = os.path.join(RESULTS_DIR, 'relational_coding')
