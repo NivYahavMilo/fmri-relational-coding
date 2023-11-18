@@ -8,9 +8,10 @@ MAPPING_FILES = os.path.join(ROOT_PATH, 'data_center', 'mappings')
 TIMING_FILES = os.path.join(ROOT_PATH, 'data_center', 'timing_files')
 
 """ External Data Source path """
-RAW_DATA = os.path.join(r'E:', 'S1200', '7T_{mode}')
-DATA_DRIVE_E = os.path.join(r'E:', 'parcelled_data_niv')
-RESULTS_DIR = os.path.join(r'E:', 'fmri-relational-coding-results')
+MY_BOOK_PATH = os.path.join('/Volumes', 'My_Book')
+RAW_DATA = os.path.join(MY_BOOK_PATH, 'S1200', '7T_{mode}')
+DATA_DRIVE_E = os.path.join(MY_BOOK_PATH, 'parcelled_data_niv')
+RESULTS_DIR = os.path.join(MY_BOOK_PATH, 'fmri-relational-coding-results')
 VOXEL_DATA = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL')
 VOXEL_DATA_RESTING_STATE = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_RESTING_STATE')
 
@@ -26,7 +27,8 @@ VOXEL_DATA_DENORMALIZED = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_denorma
 VOXEL_DATA_DF_DENORMALIZED = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_{mode}_DF_denormalized')
 SUBNET_DATA_DF_DENORMALIZED = os.path.join(DATA_DRIVE_E, 'Schaefer2018_SUBNET_{mode}_DF_denormalized')
 
-
+NETWORK_DATA_DF_DENORMALIZED = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_{mode}_DF_denormalized')
+NETWORK_SUBNET_DATA_DF_DENORMALIZED  = os.path.join(DATA_DRIVE_E, 'schaefer2018_NETWORKS_{mode}_DF_denormalized')
 
 """ Results paths """
 ACTIVATIONS_PATTERN = os.path.join(RESULTS_DIR, 'activations_patterns')

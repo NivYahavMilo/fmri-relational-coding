@@ -36,9 +36,9 @@ class FlowManager:
         voxel_extraction.run(*args, **kwargs)
 
     @classmethod
-    def _preprocess_roi_to_networks(cls, *args):
+    def _preprocess_roi_to_networks(cls, *args, **kwargs):
         roi_to_network = MapRoiToNetwork()
-        roi_to_network.flow()
+        roi_to_network.flow(*args, **kwargs)
 
     @classmethod
     def _relational_coding(cls, *args):

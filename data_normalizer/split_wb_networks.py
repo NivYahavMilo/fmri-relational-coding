@@ -1,9 +1,10 @@
+import glob
 import os
-import pickle
 
 import numpy as np
+import pandas as pd
 
-import config
+from data_normalizer import utils
 from enums import Network
 
 
@@ -18,34 +19,56 @@ class MapRoiToNetwork:
         Network.Frontoparietal: (range(95, 112), range(247, 270)),
     }
 
+    networks_data = {}
+
     @classmethod
-    def slice_network_roi(cls, data, net: Network):
-        pkl_data = {}
+    def slice_network_roi(cls, subject, net: Network, parcel, nw_info):
+
+        subject_data = pd.read_pickle(subject)
+        mean_subject_data = cls.mean_voxels_to_roi(subject_data, parcel, nw_info)
         ranges = cls.networks_indices[net]
         range1, range2 = ranges
-        pkl_data[net.name] = np.concatenate((
-            data[net.name][:, range1.start:range1.stop, :],
-            data[net.name][:, range2.start:range2.stop, :]),
-            axis=1)
+        mean_subject_data_copy = mean_subject_data.copy()
+        mean_subject_data = mean_subject_data.copy().drop(['timepoint', 'Subject', 'y'], axis=1).transpose()
+        mean_net_subject = np.concatenate((
+            mean_subject_data[mean_subject_data.index.isin((range1))],
+            mean_subject_data[mean_subject_data.index.isin((range2))]),
+            axis=0
+        )
 
-        data_path = os.path.join(config.DATA_DRIVE_E, 'Schaefer2018_300_ROI_LEVEL', f'{net.name}.pkl')
-        with open(data_path, 'wb') as f:
-            pickle.dump(pkl_data, f)
-
-    @staticmethod
-    def load_raw_data():
-        data_path = os.path.join(config.DATA_CENTER, 'raw_data')
-        file_name = os.listdir(data_path)[0]
-        with open(file_name, 'r') as f:
-            raw_data = pickle.load(f)
-
-        return raw_data
+        mean_net_subject = pd.DataFrame(mean_net_subject).transpose()
+        mean_net_subject[['timepoint', 'y', 'Subject']] = mean_subject_data_copy[['timepoint', 'y', 'Subject']]
+        return mean_net_subject
 
     @classmethod
-    def flow(cls):
-        fmri_data = cls.load_raw_data()
-        for network in Network:
-            if not network == Network.WB:
-                cls.slice_network_roi(data=fmri_data, net=network)
+    def mean_voxels_to_roi(cls, voxel_data, roi_mapping, network_mapping):
+        roi = 300
+        roi_ts = np.zeros((voxel_data.shape[0], roi))
+        voxel_data_array = voxel_data.copy().drop(['timepoint', 'Subject', 'y'], axis=1).values
+        for ii in range(roi):
+            roi_ts[:, ii] = np.mean(
+                voxel_data_array[:, roi_mapping == (ii + 1)], axis=1)
 
-# todo: check this code
+        # ***reorder based on nw info
+        roi_ts = roi_ts[:, np.argsort(network_mapping)]
+        roi_ts_df = pd.DataFrame(roi_ts)
+        roi_ts_df[['timepoint', 'y', 'Subject']] = voxel_data[['timepoint', 'y', 'Subject']]
+
+        return roi_ts_df
+
+    @classmethod
+    def flow(cls, *args, **kwargs):
+        parcel, nw_info = utils.get_parcel(roi=300, net=7)
+        mode = args[0]
+        subjects = glob.glob(kwargs['load_path'].format(mode=mode.value) + '/*')
+        for sub in subjects:
+            sub_id = sub.split('.pkl')[0][-6:]
+            for network in Network:
+                if not network == Network.WB:
+                    data = cls.slice_network_roi(subject=sub, net=network, parcel=parcel, nw_info=nw_info)
+
+                    save_path = os.path.join(kwargs['save_path'].format(mode=mode.value), network.name)
+                    if not os.path.exists(save_path):
+                        os.makedirs(save_path)
+                    subject_file_path = save_path + f'/{sub_id}'
+                    data.to_pickle(subject_file_path)

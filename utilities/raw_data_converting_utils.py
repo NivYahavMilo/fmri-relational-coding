@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import List, Callable, Union
 
 import config
 from data_center.static_data.static_data import StaticData
@@ -23,7 +23,7 @@ def convert_raw_data(*args, **kwargs):
     - flow_type=FlowType.RAW_TO_TABULAR
     """
 
-    scanning_mode: ScanningMode = kwargs.get('scanning_mode')
+    scanning_mode: ScanningMode = args[0]
 
     fm = FlowManager()
     fm.execute(
@@ -68,9 +68,17 @@ def map_voxel_level_data_to_roi(mode: Mode, **kwargs):
         save_path=config.SUBNET_DATA_DF_DENORMALIZED,
         flow_type=FlowType.VOXEL_TO_ROI
     )
+def map_rois_to_network(mode: Mode, **kwargs):
+    fm = FlowManager()
+    fm.execute(
+        mode,
+        load_path=config.NETWORK_DATA_DF_DENORMALIZED,
+        save_path=config.NETWORK_SUBNET_DATA_DF_DENORMALIZED,
+        flow_type=FlowType.ROI_TO_NETWORK
+    )
 
 
-def data_normalizer_step_execute(steps: List[FlowType], modes: List[Mode], **kwargs):
+def data_normalizer_step_execute(steps: List[FlowType], modes: List[Union[Mode, ScanningMode]], **kwargs):
     """
     Executes the data normalization steps.
 
@@ -84,7 +92,8 @@ def data_normalizer_step_execute(steps: List[FlowType], modes: List[Mode], **kwa
     steps_mapping = {
         FlowType.RAW_TO_TABULAR: convert_raw_data,
         FlowType.VOXEL_EXTRACTION: extract_voxel_from_raw_data,
-        FlowType.VOXEL_TO_ROI: map_voxel_level_data_to_roi
+        FlowType.VOXEL_TO_ROI: map_voxel_level_data_to_roi,
+        FlowType.ROI_TO_NETWORK: map_rois_to_network
     }
 
     for step in steps:
@@ -95,4 +104,4 @@ def data_normalizer_step_execute(steps: List[FlowType], modes: List[Mode], **kwa
 
 if __name__ == '__main__':
     # Execute the data normalization steps
-    data_normalizer_step_execute(steps=[FlowType.VOXEL_TO_ROI], modes=[Mode.FIRST_REST_SECTION])
+    data_normalizer_step_execute(steps=[FlowType.ROI_TO_NETWORK], modes=[Mode.FIRST_REST_SECTION])

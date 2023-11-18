@@ -78,7 +78,7 @@ class ParcelData:
         # ID <=> individual
         participants = set()
         for file in files:
-            ID = file.split('\\MNINonLinear')[0][-6:]
+            ID = file.split('/MNINonLinear')[0][-6:]
             participants.add(ID)
         participants = np.sort(list(participants))
         utils.info('Number of participants = %d' % len(participants))
