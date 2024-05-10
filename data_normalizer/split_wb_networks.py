@@ -64,11 +64,14 @@ class MapRoiToNetwork:
         for sub in subjects:
             sub_id = sub.split('.pkl')[0][-6:]
             for network in Network:
-                if not network == Network.WB:
+                save_path = os.path.join(kwargs['save_path'].format(mode=mode.value), network.name)
+                subject_file_path = save_path + f'/{sub_id}.pkl'
+                if os.path.isfile(save_path):
+                    continue
+                if not network == Network.WB and not os.path.isfile(subject_file_path):
                     data = cls.slice_network_roi(subject=sub, net=network, parcel=parcel, nw_info=nw_info)
 
-                    save_path = os.path.join(kwargs['save_path'].format(mode=mode.value), network.name)
                     if not os.path.exists(save_path):
                         os.makedirs(save_path)
-                    subject_file_path = save_path + f'/{sub_id}'
                     data.to_pickle(subject_file_path)
+                    print(f'subject: {sub_id}', f'network {network.name}')
