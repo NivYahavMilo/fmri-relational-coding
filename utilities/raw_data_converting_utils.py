@@ -105,7 +105,5 @@ def data_normalizer_step_execute(steps: List[FlowType], modes: List[Union[Mode, 
 if __name__ == '__main__':
     # Execute the data normalization steps
     data_normalizer_step_execute(steps=[
-        FlowType.VOXEL_EXTRACTION,
         FlowType.VOXEL_TO_ROI,
-        FlowType.ROI_TO_NETWORK
-    ], modes=[Mode.CLIPS, Mode.REST, Mode.FIRST_REST_SECTION])
+    ], modes=[Mode.RESTING_STATE_TASK, Mode.RESTING_STATE_REST])

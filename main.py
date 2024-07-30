@@ -193,7 +193,7 @@ def snr_measurement(**kwargs):
                         # window_range=(10,20),
                         task_ws=task_ws,
                         group_index=group_index,
-                        group_subjects=35,
+                        group_subjects=10,
                         skip_correlation=False,
                         movie_distances=True,
                         movie_activation=False,
@@ -255,10 +255,10 @@ if __name__ == '__main__':
     # isfc_relational_coding(with_plot=1)
     snr_measurement(roi='RH_DorsAttn_Post_2')
     #     # activations_pattern_for_specific_roi(roi='RH_Default_pCunPCC_1', group='_GROUP2', with_plot=True)
-    # moving_window_custom_temporal_relational_coding(
-    #     # roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'],
-    #     average_data=True,
-    #     shuffle=False,
-    #     with_plot=True,
-    #     with_bar=False
-    # )
+    moving_window_custom_temporal_relational_coding(
+        # roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'],
+        average_data=True,
+        shuffle=False,
+        with_plot=True,
+        with_bar=False
+    )
