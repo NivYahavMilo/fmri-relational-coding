@@ -1,5 +1,6 @@
 from enum import Enum, auto
 
+
 class ScanningMode(Enum):
     REST = 'rest'
     TASK = 'task'
@@ -8,10 +9,10 @@ class ScanningMode(Enum):
 class Mode(Enum):
     CLIPS = 'TASK'
     REST = 'REST'
+    FIRST_REST_SECTION = 'FIRST_REST_SECTION'
     RESTING_STATE_TASK = 'RESTING_STATE_TASK'
     RESTING_STATE_REST = 'RESTING_STATE_REST'
-    FIRST_REST_SECTION = 'FIRST_REST_SECTION'
-
+    RESTING_STATE_FIRST_REST_SECTION = 'RESTING_STATE_FIRST_REST_SECTION'
 
 
 class Network(Enum):
@@ -43,6 +44,7 @@ class FlowType(Enum):
     SNR_MEASUREMENTS = auto()
     CONCATENATED_FMRI = auto()
 
+
 class AnalysisType(Enum):
     RELATIONAL_CODING = 'Correlations'
     RESTING_STATE_RELATIONAL_CODING = 'Resting State Correlations'
@@ -50,5 +52,3 @@ class AnalysisType(Enum):
     ACTIVATIONS_PATTERNS = 'Activations'
     SINGLE_MOVIE_ACTIVATION = 'Single Movie Activation'
     MOVIE_DISTANCES = 'Movie Distances'
-
-

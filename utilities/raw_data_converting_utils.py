@@ -23,7 +23,7 @@ def convert_raw_data(*args, **kwargs):
     - flow_type=FlowType.RAW_TO_TABULAR
     """
 
-    scanning_mode: ScanningMode = args[0]
+    scanning_mode: ScanningMode = kwargs.pop('scanning_mode')
 
     fm = FlowManager()
     fm.execute(
@@ -44,9 +44,11 @@ def extract_voxel_from_raw_data(mode: Mode, **kwargs):
     It executes the process in three modes: REST, CLIPS, and FIRST_REST_SECTION.
     The resulting voxel data is saved in the config.VOXEL_DATA_DF_DENORMALIZED path.
     """
+    scanning_mode: ScanningMode = kwargs.pop('scanning_mode')
     fm = FlowManager()
     fm.execute(
         mode,
+        scanning_mode=scanning_mode,
         save_path=config.VOXEL_DATA_DF_DENORMALIZED,
         raw_data_path=config.VOXEL_DATA_DENORMALIZED,
         flow_type=FlowType.VOXEL_EXTRACTION
@@ -68,6 +70,8 @@ def map_voxel_level_data_to_roi(mode: Mode, **kwargs):
         save_path=config.SUBNET_DATA_DF_DENORMALIZED,
         flow_type=FlowType.VOXEL_TO_ROI
     )
+
+
 def map_rois_to_network(mode: Mode, **kwargs):
     fm = FlowManager()
     fm.execute(
@@ -106,4 +110,5 @@ if __name__ == '__main__':
     # Execute the data normalization steps
     data_normalizer_step_execute(steps=[
         FlowType.VOXEL_TO_ROI,
-    ], modes=[Mode.RESTING_STATE_TASK, Mode.RESTING_STATE_REST])
+
+    ], scanning_mode=ScanningMode.REST, modes=[Mode.RESTING_STATE_FIRST_REST_SECTION])

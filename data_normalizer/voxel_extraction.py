@@ -11,7 +11,7 @@ from enums import Mode
 class VoxelExtraction:
 
     @staticmethod
-    def _clip_class_df(data, subject, clip_y, k_runs, timing_file):
+    def _clip_class_df(data, subject, clip_y, k_runs, timing_file, resting_state: bool):
         """
         save each timepoint as feature vector
         append class label based on clip
@@ -35,10 +35,9 @@ class VoxelExtraction:
                 start = int(np.floor(clip['start_tr']))
                 stop = int(np.ceil(clip['stop_tr']))
 
-                # Resting state condition
-                # if stop >= 900:
-                #     stop = 899
-                ########################
+                if resting_state and stop >= 900:
+                    stop = 899
+
                 clip_length = stop - start
 
                 # assign label to clip
@@ -58,8 +57,8 @@ class VoxelExtraction:
 
     @classmethod
     def run(cls, mode: Mode, **kwargs):
-
-        raw_data_loading_path = kwargs['raw_data_path']
+        scan_mode = kwargs['scanning_mode'].name
+        raw_data_loading_path = kwargs['raw_data_path'].format(scan_mode=scan_mode)
         save_dir_path = kwargs['save_path']
         save_dir_path = save_dir_path.format(mode=mode.value)
         if not os.path.exists(save_dir_path):
@@ -71,15 +70,17 @@ class VoxelExtraction:
         for sub in os.listdir(raw_data_loading_path):
             sub_id = sub.replace('.pkl', '')[-6:]
 
-            load_path = os.path.join(raw_data_loading_path, fr'data_4_runs_voxel_{config.K_GRAYORIDNATES}_ts_subject_{sub_id}.pkl')
+            load_path = os.path.join(raw_data_loading_path,
+                                     fr'data_4_runs_voxel_{config.K_GRAYORIDNATES}_ts_subject_{sub_id}.pkl')
 
-            output_path = os.path.join(save_dir_path,  f"4_RUNS_VOXEL_LEVEL_SUBJECT_{sub_id}.pkl")
+            output_path = os.path.join(save_dir_path, f"4_RUNS_VOXEL_LEVEL_SUBJECT_{sub_id}.pkl")
 
             if not os.path.isfile(output_path):
                 data = pd.read_pickle(load_path)
 
                 sub_data = cls._clip_class_df(data=data, subject=sub_id, clip_y=clip_y, k_runs=4,
-                                              timing_file=timing_file)
+                                              timing_file=timing_file,
+                                              resting_state=True if scan_mode == "REST" else False)
 
                 df = pd.DataFrame(sub_data)
                 df['Subject'] = df['Subject'].astype(int)

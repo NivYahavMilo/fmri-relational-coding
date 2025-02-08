@@ -4,15 +4,17 @@ collect participants' runs into data cell
 2. zscore (normalize) each time series
 3. save subject tag
 """
-import numpy as np
-import nibabel as nib
 import os
-from glob import glob
 import pickle
+from glob import glob
+
+import nibabel as nib
+import numpy as np
 
 import config
-from enums import Mode
 import data_normalizer.utils as utils
+from enums import ScanningMode
+
 
 class ParcelData:
 
@@ -62,7 +64,7 @@ class ParcelData:
     @classmethod
     def run(cls, *args, **kwargs):
 
-        mode: Mode = args[0]
+        scan_mode: ScanningMode = args[0]
         roi = kwargs['k_roi']
         net = kwargs['k_net']
 
@@ -71,7 +73,7 @@ class ParcelData:
 
         # use glob to get all files with `ext`
         ext = '*MSMAll_hp2000_clean.dtseries.nii'
-        files = [y for x in os.walk(config.RAW_DATA.format(mode=mode.value))
+        files = [y for x in os.walk(config.RAW_DATA.format(scanning_mode=scan_mode.value))
                  for y in glob(os.path.join(x[0], ext))]
 
         # get list of participants
@@ -82,7 +84,6 @@ class ParcelData:
             participants.add(ID)
         participants = np.sort(list(participants))
         utils.info('Number of participants = %d' % len(participants))
-
 
         for ii, ID in enumerate(participants):
             ID_files = [file for file in files if ID in file]
@@ -110,11 +111,12 @@ class ParcelData:
                     save_ts[:t, :, run] = run_ts
 
                 data[ID] = save_ts
-                SAVE_DIR = kwargs['save_path']
+                SAVE_DIR = kwargs['save_path'].format(mode=scan_mode.name)
                 if not os.path.exists(SAVE_DIR):
                     os.makedirs(SAVE_DIR)
 
-                save_path = os.path.join(SAVE_DIR, 'data_4_runs_voxel_%d_ts_subject_%s.pkl' % (config.K_GRAYORIDNATES, ID))
+                save_path = os.path.join(SAVE_DIR,
+                                         'data_4_runs_voxel_%d_ts_subject_%s.pkl' % (config.K_GRAYORIDNATES, ID))
                 with open(save_path, 'wb') as f:
                     pickle.dump(data, f)
                 del data, save_ts
