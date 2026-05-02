@@ -2,3 +2,5 @@
 *.png
 *.zip
 \playground.py
+.DS_Store
+.venv/
