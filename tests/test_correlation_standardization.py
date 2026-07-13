@@ -29,10 +29,8 @@ def test_pearson_correlation_is_xtx_over_n_minus_1():
     assert np.allclose(out.values, expected)
 
 
-def test_ssmd_currently_sums_mean_differences_only():
-    """FLAG: the ``/ pooled_std`` is commented out, so this does NOT compute SSMD.
-
-    It currently returns sum(x_mean[i] - y_mean[i]); the std arguments are ignored.
-    """
-    result = ssmd(x_mean=[3.0, 5.0], x_std=[1.0, 1.0], y_mean=[1.0, 2.0], y_std=[9.0, 9.0])
-    assert result == (3.0 - 1.0) + (5.0 - 2.0)  # == 5.0, independent of the std args
+def test_ssmd_is_standardized_mean_difference():
+    """Sum over i of (x_mean - y_mean) / sqrt(x_std**2 + y_std**2)."""
+    result = ssmd(x_mean=[3.0, 5.0], x_std=[3.0, 4.0], y_mean=[1.0, 2.0], y_std=[4.0, 3.0])
+    expected = (3.0 - 1.0) / np.sqrt(3.0 ** 2 + 4.0 ** 2) + (5.0 - 2.0) / np.sqrt(4.0 ** 2 + 3.0 ** 2)
+    assert np.isclose(result, expected)  # == 0.4 + 0.6 == 1.0
