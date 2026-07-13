@@ -30,27 +30,28 @@ def test_is_symmetric():
     assert not M.is_symmetric(np.array([[1.0, 2], [3, 1]]))
 
 
-def test_drop_symmetric_side_returns_lower_triangle_including_diagonal():
-    """Pins CURRENT behavior. FLAG: drop_diagonal=True has NO effect — `matrix.values[...] = nan`
-    writes to df.values (a copy), so the diagonal is never blanked and appears in the result."""
+def test_drop_symmetric_side_drops_diagonal():
+    """drop_diagonal=True returns the strict lower triangle (self-correlations excluded)."""
     m = pd.DataFrame([[1.0, 2, 3], [2, 1, 4], [3, 4, 1]])
-    out = M.drop_symmetric_side_of_a_matrix(m.copy(), drop_diagonal=True)
-    # lower triangle WITH the (undropped) diagonal: the three 1.0 self-values are still present
+    out = M.drop_symmetric_side_of_a_matrix(m, drop_diagonal=True)
+    assert sorted(out.tolist()) == [2.0, 3.0, 4.0]
+
+
+def test_drop_symmetric_side_keeps_diagonal_when_requested():
+    m = pd.DataFrame([[1.0, 2, 3], [2, 1, 4], [3, 4, 1]])
+    out = M.drop_symmetric_side_of_a_matrix(m, drop_diagonal=False)
     assert sorted(out.tolist()) == [1.0, 1.0, 1.0, 2.0, 3.0, 4.0]
 
 
-def test_drop_symmetric_side_does_not_actually_mutate_or_drop_diagonal():
-    """FLAG: the in-place `matrix.values[diag] = nan` targets a copy, so neither the input is
-    mutated nor is the diagonal dropped."""
+def test_drop_symmetric_side_does_not_mutate_input():
     m = pd.DataFrame([[1.0, 2], [2, 1]])
     M.drop_symmetric_side_of_a_matrix(m, drop_diagonal=True)
-    assert not np.isnan(m.values).any()  # input left unchanged
+    assert m.values[0, 0] == 1.0 and not np.isnan(m.values).any()  # input untouched
 
 
-def test_drop_symmetric_side_on_asymmetric_raises():
-    """FLAG: `raise (ValueError, msg)` raises a tuple -> TypeError, not the intended ValueError."""
+def test_drop_symmetric_side_on_asymmetric_raises_valueerror():
     asym = pd.DataFrame([[1.0, 2], [3, 4]])
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         M.drop_symmetric_side_of_a_matrix(asym)
 
 

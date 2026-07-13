@@ -25,15 +25,13 @@ class MatrixOperations:
     @classmethod
     def drop_symmetric_side_of_a_matrix(cls, matrix: pd.DataFrame, drop_diagonal: bool = True):
         if not cls.is_symmetric(matrix):
-            raise (ValueError, "Input matrix shape should be symmetric")
-        h, w = matrix.shape
-        # Wa want the main diagonal with no off-set
-        k = 0
-        if drop_diagonal:
-            # Set np.nan in diagonal position
-            matrix.values[np.diag_indices(h)] = np.nan
-        # Pull the lower triangle of the symmetric matrix and flatten the results
-        lower_triangle: np.array = matrix.values[np.tril_indices(h, k=k)]
+            raise ValueError("Input matrix shape should be symmetric")
+        # Copy so the caller's matrix is never mutated.
+        values = np.asarray(matrix).copy()
+        h = values.shape[0]
+        # k=-1 excludes the main diagonal from the lower triangle; k=0 keeps it.
+        k = -1 if drop_diagonal else 0
+        lower_triangle: np.array = values[np.tril_indices(h, k=k)]
         # Drop nan values if existed
         lower_triangle = lower_triangle[~np.isnan(lower_triangle)]
         return lower_triangle
