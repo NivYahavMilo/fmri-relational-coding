@@ -7,19 +7,17 @@ class SignalProcessing:
 
     @staticmethod
     def _get_max_frequency(data: pd.DataFrame):
-        data: np.array = data.values
+        values: np.array = data.values
 
         # calculate the power spectral density (PSD) using the Welch method
         fs = 1.0  # sampling frequency (1 TR = 1 Sec)
-        f, psd = welch(data, fs=fs, nperseg=28, scaling='density', axis=1)
+        f, psd = welch(values, fs=fs, nperseg=28, scaling='density', axis=1)
 
-        # find the frequency at which the power is highest
-        max_power_freq = data.flatten()[np.argmax(psd)]
+        # the frequency carrying the most power (averaged across the signals)
+        mean_psd = np.mean(psd, axis=0)
+        max_power_freq = abs(f[np.argmax(mean_psd)])
 
-        # considering the power of the frequency regardless to its sign
-        max_power_freq = abs(max_power_freq)
-
-        return round(max_power_freq, 3)
+        return round(float(max_power_freq), 3)
 
     @classmethod
     def low_pass_filtering(cls, data: pd.DataFrame, filter_order: int, cut_off: float):

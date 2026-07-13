@@ -20,10 +20,10 @@ def test_low_pass_filtering_shape_and_attenuates_high_freq():
     assert np.std(out["c0"].to_numpy() - low) < np.std(sig - low)
 
 
-def test_get_max_frequency_returns_nonnegative_float_smoke():
-    """Smoke test only. FLAG: this indexes the (flattened) data by argmax of the PSD, which is
-    dimensionally inconsistent and looks like a bug — see the review notes."""
-    data = pd.DataFrame(np.random.default_rng(0).standard_normal((5, 30)))
+def test_get_max_frequency_finds_dominant_frequency():
+    t = np.arange(60)
+    # three signals, each a 0.1 Hz sinusoid over time (welch runs along axis=1)
+    data = pd.DataFrame(np.vstack([np.sin(2 * np.pi * 0.1 * t) for _ in range(3)]))
     val = SignalProcessing._get_max_frequency(data)
-    assert isinstance(val, float)
-    assert val >= 0.0
+    assert 0.0 <= val <= 0.5          # a valid frequency (<= Nyquist)
+    assert 0.05 <= val <= 0.2         # near the true 0.1 Hz (within Welch's bin resolution)
