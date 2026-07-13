@@ -1,6 +1,12 @@
 *.pkl
 *.png
 *.zip
-\playground.py
+playground.py
 .DS_Store
 .venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.idea/
+.vscode/
