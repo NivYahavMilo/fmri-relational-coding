@@ -35,11 +35,6 @@ class SignalProcessing:
         filtered_data = np.zeros_like(data)
         for i in range(data.shape[1]):
             filtered_data[:, i] = filtfilt(b, a, data.iloc[:, i])
-            data.iloc[:, i].plot()
-            import matplotlib.pyplot as plt
-            plt.show()
-            pd.DataFrame(filtered_data[:, i]).plot()
-            plt.show()
 
         filtered_data = pd.DataFrame(filtered_data)
         filtered_data.columns = data.columns
