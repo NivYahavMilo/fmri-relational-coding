@@ -17,12 +17,8 @@ def _calculate_distance_vectors(dataframe: pd.DataFrame):
     # Calculate the average voxel value for each movie
     movie_averages = dataframe.mean(axis=0)
 
-    # Create an empty dataframe to store the distance vectors
-    distance_vectors = pd.DataFrame(columns=dataframe.columns)
-
     # Calculate distance vectors for each movie compared to the rest
-    for movie in dataframe.columns:
-        distance_vector = abs(movie_averages[movie] - movie_averages)
-        distance_vectors = distance_vectors.append(distance_vector, ignore_index=True)
+    rows = [abs(movie_averages[movie] - movie_averages) for movie in dataframe.columns]
+    distance_vectors = pd.DataFrame(rows).reset_index(drop=True)
 
     return distance_vectors
