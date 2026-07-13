@@ -28,8 +28,8 @@ class ConcatFmriTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
         concat_clips = np.concatenate(clips.values)
         concat_rests = np.concatenate(rest.values)
 
-        concat_clips_z = z_score(concat_clips)
-        concat_rests_z = z_score(concat_rests)
+        concat_clips_z = z_score(concat_clips, axis=0)
+        concat_rests_z = z_score(concat_rests, axis=0)
 
         df_concatenated_signals = pd.DataFrame({'concat_clip': concat_clips_z, 'concat_rest': concat_rests_z})
         df_corr = df_concatenated_signals.corr()
