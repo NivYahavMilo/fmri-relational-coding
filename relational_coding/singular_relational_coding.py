@@ -13,7 +13,7 @@ class SingularRelationalCoding(RelationalCodingBase):
     @staticmethod
     def _get_avg_rest_matrix(rest_data, clip_index):
         rd_clip = rest_data[rest_data['y'] == clip_index]
-        rd_clip = rd_clip.drop(['y', 'Subject', 'timepoint'], axis=1)
+        rd_clip = RelationalCodingBase._drop_metadata_columns(rd_clip)
         return np.mean(rd_clip.values, axis=0)
 
     def singular_relational_coding(self, d_task, d_rest):

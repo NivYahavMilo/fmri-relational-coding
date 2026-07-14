@@ -58,11 +58,6 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
         if clip_data.empty:
             return pd.DataFrame()
 
-        drop_columns = []
-        if 'Subject' in clip_data.columns:
-            drop_columns.append('Subject')
-        drop_columns.extend(['y', 'timepoint'])
-
         start_tr, end_tr = window_indices
         new_end_of_clip = end_tr - kwargs['max_rest_tr']
 
@@ -73,20 +68,14 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
             new_start_of_clip = start_tr - kwargs['max_rest_tr']
             tr_range = range(new_start_of_clip, new_end_of_clip)
 
-        clip_data_window = clip_data[clip_data['timepoint'].isin(tr_range)].drop(drop_columns, axis=1)
-        return clip_data_window
+        clip_data_window = clip_data[clip_data['timepoint'].isin(tr_range)]
+        return RelationalCodingBase._drop_metadata_columns(clip_data_window)
 
     def get_rest_window_slides_vectors(self, data_rest, clip_i, window_size_rest, **kwargs):
-        drop_columns = []
-
         rest_ct = data_rest[data_rest['y'] == clip_i]
         start, end = window_size_rest
 
-        if 'Subject' in rest_ct.columns:
-            drop_columns.append('Subject')
-        drop_columns.extend(['y', 'timepoint'])
-
-        rest_ct_window = rest_ct[rest_ct['timepoint'].isin(range(start, end))].drop(drop_columns, axis=1)
+        rest_ct_window = self._drop_metadata_columns(rest_ct[rest_ct['timepoint'].isin(range(start, end))])
 
         max_timepoint = max(rest_ct['timepoint'])
         if max_timepoint < end:
@@ -102,8 +91,6 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
 
     @staticmethod
     def get_task_window_slides_vectors(data_task, clip_i, init_window, window_size_task, **kwargs):
-        drop_columns = []
-
         clip_ct = data_task[(data_task['y'] == clip_i)]
 
         if init_window == 'start':
@@ -130,11 +117,9 @@ class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
         else:
             raise ValueError('init_window value wrong')
 
-        if 'Subject' in clip_ct.columns:
-            drop_columns.append('Subject')
-        drop_columns.extend(['y', 'timepoint'])
-
-        clip_ct_window = clip_ct[clip_ct['timepoint'].isin(clip_window)].drop(drop_columns, axis=1)
+        clip_ct_window = RelationalCodingBase._drop_metadata_columns(
+            clip_ct[clip_ct['timepoint'].isin(clip_window)]
+        )
         task_window_avg = np.mean(clip_ct_window.values, axis=0)
         # task_window_avg_z = z_score(task_window_avg, axis=0)
 
