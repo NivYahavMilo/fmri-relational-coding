@@ -1,0 +1,36 @@
+[project]
+name = "fmri-relational-coding"
+version = "0.1.0"
+description = "fMRI relational-coding analysis: ISFC and temporal relational-coding over HCP movie/rest data (Schaefer-300 parcellation)."
+readme = "README.md"
+requires-python = ">=3.9,<3.11"
+license = { file = "LICENSE" }
+# Pins mirror the validated study environment (Python 3.9); do not bump without
+# re-running the analyses — numerical results depend on these versions.
+dependencies = [
+    "numpy~=1.23.1",
+    "pandas~=1.4.3",
+    "matplotlib~=3.5.2",
+    "nibabel~=4.0.2",
+    "scipy~=1.8.1",
+    "scikit-learn~=1.1.1",
+    "seaborn~=0.12.2",
+    "python-dotenv~=0.21",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+]
+
+[tool.uv]
+# Flat script repository (top-level modules, no importable package to build).
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    "ignore::FutureWarning",
+    "ignore::DeprecationWarning",
+]
