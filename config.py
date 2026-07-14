@@ -7,11 +7,11 @@ STATIC_DATA_PATH = os.path.join(ROOT_PATH, 'data_center', 'static_data')
 MAPPING_FILES = os.path.join(ROOT_PATH, 'data_center', 'mappings')
 TIMING_FILES = os.path.join(ROOT_PATH, 'data_center', 'timing_files')
 
-""" External Data Source path """
-MY_BOOK_PATH = os.path.join('/Volumes', 'My_Book')
+""" External Data Source path (override the roots with environment variables) """
+MY_BOOK_PATH = os.environ.get('RC_DRIVE', os.path.join('/Volumes', 'My_Book'))
 RAW_DATA = os.path.join(MY_BOOK_PATH, 'S1200', '7T_{scanning_mode}')
-DATA_DRIVE_E = os.path.join(MY_BOOK_PATH, 'parcelled_data_niv')
-RESULTS_DIR = os.path.join(MY_BOOK_PATH, 'fmri-relational-coding-results')
+DATA_DRIVE_E = os.environ.get('RC_DATA_DIR', os.path.join(MY_BOOK_PATH, 'parcelled_data_niv'))
+RESULTS_DIR = os.environ.get('RC_RESULTS_DIR', os.path.join(MY_BOOK_PATH, 'fmri-relational-coding-results'))
 VOXEL_DATA = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL')
 VOXEL_DATA_RESTING_STATE = os.path.join(DATA_DRIVE_E, 'schaefer2018_VOXEL_RESTING_STATE')
 
