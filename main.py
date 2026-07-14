@@ -1,7 +1,7 @@
 import visualizations.plot_relational_coding as plot
 import visualizations.plot_snr_measurement as plot_snr
 import visualizations.plot_temporal_relational_coding_window as plot_window
-from activtions_patterns.fmri_activations_pattern import FmriActivationPattern
+from activations_patterns.fmri_activations_pattern import FmriActivationPattern
 from data_center.static_data.static_data import StaticData
 from flows import custom_temporal, fmri_relational_coding, isfc, singular, snr
 

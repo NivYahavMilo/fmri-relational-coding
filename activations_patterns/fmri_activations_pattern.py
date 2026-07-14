@@ -4,7 +4,7 @@ import pandas as pd
 
 import config
 import data_normalizer.utils as utils
-from activtions_patterns.base_activations_pattern import BaseActivationPattern
+from activations_patterns.base_activations_pattern import BaseActivationPattern
 from enums import Mode
 
 

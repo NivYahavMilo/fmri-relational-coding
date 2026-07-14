@@ -5,7 +5,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from enums import AnalysisType
-from viusalization_utils import gather_dynamic_correlation_by_window
+from visualization_utils import gather_dynamic_correlation_by_window
 
 
 def create_movie_activation_vector(data):

@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from arithmetic_operations import distances_utils
-from arithmetic_operations.correlation_and_standartization import z_score
+from arithmetic_operations.correlation_and_standardization import z_score
 from arithmetic_operations.decomposition import Decomposition
 from arithmetic_operations.matrix_op import MatrixOperations
 from arithmetic_operations.signal_processing import SignalProcessing
