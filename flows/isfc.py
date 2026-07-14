@@ -3,7 +3,7 @@ import os
 
 import pandas as pd
 
-import config
+import settings
 import data_access
 import rc_core
 from data_center.static_data.static_data import StaticData
@@ -12,7 +12,7 @@ from enums import Mode
 
 
 def _load_subjects_average_leave_one_out(roi_name, subject):
-    data_path = os.path.join(config.SUBJECTS_AVG_DATA_LEAVE_ONE_OUT, subject, f"{roi_name}.pkl")
+    data_path = os.path.join(settings.SUBJECTS_AVG_DATA_LEAVE_ONE_OUT, subject, f"{roi_name}.pkl")
     return pd.read_pickle(data_path)
 
 
@@ -32,7 +32,7 @@ def _isfc_relational_coding(data_task, data_rest, window_size_task, shuffle):
 
 
 def run(roi):
-    results_path = os.path.join(config.ISFC_RELATIONAL_CODING_RESULTS, f"{roi}.pkl")
+    results_path = os.path.join(settings.ISFC_RELATIONAL_CODING_RESULTS, f"{roi}.pkl")
     if os.path.isfile(results_path):
         return
 

@@ -1,7 +1,7 @@
 """Custom-temporal relational coding over sliding rest windows (was CustomTemporalRelationalCoding)."""
 import os
 
-import config
+import settings
 import data_access
 import rc_core
 from data_normalizer import utils
@@ -10,13 +10,13 @@ from enums import Mode
 
 def _subject_flow(roi, init_window_task, ws_task, ws_rest, **kwargs):
     range_ = f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr'
-    output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(range=range_)
+    output_dir = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(range=range_)
     if kwargs.get('shuffle_rest'):
         output_dir = output_dir.replace('end', 'shuffle')
     if kwargs.get('filtering'):
-        output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING.format(range=range_)
+        output_dir = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING.format(range=range_)
     if kwargs.get('decomposition'):
-        output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA.format(range=range_)
+        output_dir = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA.format(range=range_)
 
     save_path = os.path.join(output_dir, f"{roi}.pkl")
     if not os.path.exists(output_dir):
@@ -37,7 +37,7 @@ def _subject_flow(roi, init_window_task, ws_task, ws_rest, **kwargs):
 
 def _avg_flow(roi, init_window_task, ws_task, ws_rest, **kwargs):
     range_ = f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr'
-    output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG.format(range=range_)
+    output_dir = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG.format(range=range_)
     if kwargs.get('shuffle_rest'):
         output_dir = output_dir.replace('end', 'shuffle')
 

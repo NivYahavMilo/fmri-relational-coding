@@ -1,7 +1,7 @@
 """SNR / movie-distance measurements over groups (was SnrMeasurementsRelationalCoding)."""
 import os
 
-import config
+import settings
 import data_access
 import rc_core
 from data_normalizer import utils
@@ -13,7 +13,7 @@ def run(roi, **kwargs):
     ws_task = kwargs.pop('task_ws')
     ws_rest = kwargs.pop('rest_ws')
 
-    output_dir = config.MOVIE_DISTANCES_CORRELATION_ANALYSIS.format(
+    output_dir = settings.MOVIE_DISTANCES_CORRELATION_ANALYSIS.format(
         range=f'task_{init_window_task}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr',
         group_amount=kwargs['group_subjects'], group_index=kwargs['group_index'])
     save_path = os.path.join(output_dir, f"{roi}.pkl")

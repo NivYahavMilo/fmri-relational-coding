@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-import config
+import settings
 from data_center.static_data.static_data import StaticData
 
 
@@ -13,8 +13,8 @@ def plot_snr_measurement(group_i, **kwargs):
     if not getattr(StaticData, 'ROI_NAMES'):
         StaticData.inhabit_class_members()
 
-    main_path = config.SNR_RELATIONAL_CODING_RESULTS
-    figure_path = config.SNR_RELATIONAL_CODING_RESULTS_FIGURES
+    main_path = settings.SNR_RELATIONAL_CODING_RESULTS
+    figure_path = settings.SNR_RELATIONAL_CODING_RESULTS_FIGURES
     subjects_groups = range(1, 70)
     roi_mean_score = {}
     correlation_matrix_max = {}

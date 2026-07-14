@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 
-import config
+import settings
 import data_normalizer.utils as utils
 from enums import Mode
 
@@ -18,7 +18,7 @@ class VoxelExtraction:
         return:
         """
         table = []
-        idx = np.ones(config.K_GRAYORIDNATES).astype(bool)
+        idx = np.ones(settings.K_GRAYORIDNATES).astype(bool)
         for k_run in range(k_runs):
 
             run_name = 'MOVIE%d' % (k_run + 1)  # MOVIEx_7T_yz
@@ -64,14 +64,14 @@ class VoxelExtraction:
         if not os.path.exists(save_dir_path):
             os.makedirs(save_dir_path)
 
-        timing_file = pd.read_csv(os.path.join(config.TIMING_FILES, f'{mode.value}_TIMING_FILE.csv'))
+        timing_file = pd.read_csv(os.path.join(settings.TIMING_FILES, f'{mode.value}_TIMING_FILE.csv'))
         clip_y = utils.get_clip_labels(timing_file)
 
         for sub in os.listdir(raw_data_loading_path):
             sub_id = sub.replace('.pkl', '')[-6:]
 
             load_path = os.path.join(raw_data_loading_path,
-                                     fr'data_4_runs_voxel_{config.K_GRAYORIDNATES}_ts_subject_{sub_id}.pkl')
+                                     fr'data_4_runs_voxel_{settings.K_GRAYORIDNATES}_ts_subject_{sub_id}.pkl')
 
             output_path = os.path.join(save_dir_path, f"4_RUNS_VOXEL_LEVEL_SUBJECT_{sub_id}.pkl")
 

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-import config
+import settings
 from arithmetic_operations.correlation_and_standardization import ssmd
 from data_center.static_data.static_data import StaticData
 from enums import AnalysisType
@@ -107,8 +107,8 @@ def add_shuffle(dynamic_size: int, **kwargs):
 def save_all_figures_flow():
     for roi in StaticData.ROI_NAMES:
         for window in ['start', 'middle', 'end']:
-            for analysis, path_ in zip(RESULTS_DIR.keys(), [config.ARTICLE_FIGURES_PATH_ACTIVATIONS,
-                                                            config.ARTICLE_FIGURES_PATH_CORRELATIONS]):
+            for analysis, path_ in zip(RESULTS_DIR.keys(), [settings.ARTICLE_FIGURES_PATH_ACTIVATIONS,
+                                                            settings.ARTICLE_FIGURES_PATH_CORRELATIONS]):
                 plot_mean_and_error_bar_of_group_dynamic(
                     roi=roi,
                     n_subjects=35,
@@ -211,7 +211,7 @@ if __name__ == '__main__':
     #             init_window_start=0,
     #             init_window_end=5,
     #             analysis_mode=AnalysisType.RESTING_STATE_RELATIONAL_CODING
-    #             # figures_path=config.SNR_RESTING_STATE_RELATIONAL_CODING_RESULTS_FIGURES
+    #             # figures_path=settings.SNR_RESTING_STATE_RELATIONAL_CODING_RESULTS_FIGURES
     #         )
     for roi in StaticData.ROI_NAMES:
         plot_mean_and_error_bar_of_group_dynamic(
@@ -239,4 +239,4 @@ if __name__ == '__main__':
     #         add_noise=True,
     #         analysis_mode=AnalysisType.RELATIONAL_CODING
 
-    # figures_path=config.ARTICLE_FIGURES_PATH_CORRELATIONS
+    # figures_path=settings.ARTICLE_FIGURES_PATH_CORRELATIONS

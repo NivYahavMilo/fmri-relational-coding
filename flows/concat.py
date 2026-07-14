@@ -1,7 +1,7 @@
 """Concatenated-signal activation patterns (was ConcatFmriTemporalRelationalCoding)."""
 import os
 
-import config
+import settings
 import data_access
 import rc_core
 from data_normalizer import utils
@@ -16,7 +16,7 @@ def _average_data_flow(roi, **kwargs):
     single_movie_activation = kwargs.pop('movie_activation', False)
 
     _range = f'task_{init_window_task}{clip_window[0]}{clip_window[1]}_{ws_task}_tr_rest_{ws_rest[0]}-{ws_rest[1]}_tr'
-    output_dir = config.FMRI_SINGLE_MOVIE_ACTIVATIONS_PATTERN_RESULTS.format(
+    output_dir = settings.FMRI_SINGLE_MOVIE_ACTIVATIONS_PATTERN_RESULTS.format(
         range=_range, group_amount=kwargs['group_subjects'], group_index=kwargs['group_index'])
 
     if not os.path.exists(output_dir):

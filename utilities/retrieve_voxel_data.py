@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
-import config
+import settings
 from arithmetic_operations.correlation_and_standardization import z_score
 from data_center.static_data.static_data import StaticData
 from enums import Mode
@@ -12,7 +12,7 @@ StaticData.inhabit_class_members()
 
 
 def load_group(roi, n_subjects, group_index, mode: Mode):
-    group_path = config.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=group_index)
+    group_path = settings.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=group_index)
     roi_path = os.path.join(group_path, f'{roi}.pkl')
     df = pd.read_pickle(roi_path)
     return df
