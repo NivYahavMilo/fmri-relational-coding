@@ -1,9 +1,9 @@
 import visualizations.plot_relational_coding as plot
 import visualizations.plot_snr_measurement as plot_snr
 import visualizations.plot_temporal_relational_coding_window as plot_window
+from activtions_patterns.fmri_activations_pattern import FmriActivationPattern
 from data_center.static_data.static_data import StaticData
-from enums import DataType, FlowType
-from flow_manager import FlowManager
+from flows import custom_temporal, fmri_relational_coding, isfc, singular, snr
 
 # load dictionary to static class members
 StaticData.inhabit_class_members()
@@ -12,9 +12,7 @@ StaticData.inhabit_class_members()
 def relation_coding_for_all_roi(avg_data: bool = False, with_plot: bool = False, group: str = '',
                                 shuffle: bool = False):
     for roi in StaticData.ROI_NAMES:
-        fm = FlowManager()
-        fm.execute(DataType.FMRI, roi, avg_data, group, shuffle, flow_type=FlowType.RELATIONAL_CODING)
-        del fm
+        fmri_relational_coding.run(roi, avg_data=avg_data, group=group, shuffle=shuffle)
 
         if with_plot:
             if avg_data:
@@ -24,8 +22,7 @@ def relation_coding_for_all_roi(avg_data: bool = False, with_plot: bool = False,
 
 
 def relation_coding_for_specific_roi(roi, avg_data: bool = False, with_plot: bool = False):
-    fm = FlowManager()
-    fm.execute(DataType.FMRI, roi, avg_data, flow_type=FlowType.RELATIONAL_CODING)
+    fmri_relational_coding.run(roi, avg_data=avg_data)
     if with_plot:
         if avg_data:
             plot.plot_pipe_avg(roi)
@@ -35,44 +32,35 @@ def relation_coding_for_specific_roi(roi, avg_data: bool = False, with_plot: boo
 
 def activations_pattern_for_all_roi(group, with_plot: bool = False):
     for roi in StaticData.ROI_NAMES:
-        fm = FlowManager()
-        fm.execute(DataType.FMRI, roi, group, flow_type=FlowType.ACTIVATIONS_PATTERNS)
-        del fm
+        FmriActivationPattern().run(roi=roi, group=group)
         if with_plot:
             plot.plot_activation_pattern(roi, group)
 
 
 def activations_pattern_for_specific_roi(roi, group, with_plot: bool = False):
-    fm = FlowManager()
-    fm.execute(DataType.FMRI, roi, group, flow_type=FlowType.ACTIVATIONS_PATTERNS)
+    FmriActivationPattern().run(roi=roi, group=group)
     if with_plot:
         plot.plot_activation_pattern(roi, group)
 
 
 def singular_relational_coding(group, with_plot: bool = False):
     for roi in StaticData.ROI_NAMES:
-        fm = FlowManager()
-        fm.execute(DataType.FMRI, group, flow_type=FlowType.SINGULAR_RELATIONAL_CODING)
-        del fm
+        singular.run(roi=roi, group=group)
 
 
 def singular_relational_coding_for_specific_roi(roi, group, with_plot: bool = False):
-    fm = FlowManager()
-    fm.execute(DataType.FMRI, roi, group, flow_type=FlowType.SINGULAR_RELATIONAL_CODING)
+    singular.run(roi=roi, group=group)
 
 
 def custom_temporal_relational_coding_for_specific_roi(roi, rest_ws, task_ws, with_plot: bool = False):
-    fm = FlowManager()
-    fm.execute(DataType.FMRI, roi, rest_ws, task_ws, flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING)
+    custom_temporal.run(roi, rest_window_size=rest_ws, init_window_task='end', task_window_size=task_ws)
     if with_plot:
         plot.custom_window_rc_histogram(roi=roi, rest_window=rest_ws, task_window=task_ws)
 
 
 def custom_temporal_relational_coding(rest_ws, task_ws, with_plot: bool = False):
     for roi in StaticData.ROI_NAMES:
-        fm = FlowManager()
-        fm.execute(DataType.FMRI, roi, rest_ws, task_ws, flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING)
-        del fm
+        custom_temporal.run(roi, rest_window_size=rest_ws, init_window_task='end', task_window_size=task_ws)
 
         if with_plot:
             plot.custom_window_rc_histogram(roi=roi, rest_window=rest_ws, task_window=task_ws)
@@ -95,10 +83,8 @@ def moving_window_custom_temporal_relational_coding(**kwargs):
         while rest_e < 30:
             rest_ws = rest_s, rest_e
             for roi in rois:
-                fm = FlowManager()
-                fm.execute(DataType.FMRI, roi, rest_ws, init_window, task_ws,
-                           flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING, **kwargs)
-                del fm
+                custom_temporal.run(roi, rest_window_size=rest_ws, init_window_task=init_window,
+                                    task_window_size=task_ws, **kwargs)
 
             print('done window', rest_ws)
             rest_s += 1
@@ -113,9 +99,7 @@ def moving_window_custom_temporal_relational_coding(**kwargs):
 
 def isfc_relational_coding(with_plot=None):
     for roi in StaticData.ROI_NAMES:
-        fm = FlowManager()
-        fm.execute(DataType.FMRI, roi, flow_type=FlowType.ISFC_RELATIONAL_CODING)
-        del fm
+        isfc.run(roi)
 
         if with_plot:
             plot.plot_pipe(roi)
@@ -135,22 +119,18 @@ def moving_window_custom_temporal_relational_coding_with_signal_processing(
         while rest_e < 19:
             rest_ws = rest_s, rest_e
             # for roi in StaticData.ROI_NAMES:
-            fm = FlowManager()
-            fm.execute(
-                DataType.FMRI,
+            custom_temporal.run(
                 roi,
-                rest_ws,
-                init_window,
-                task_ws,
-                avg_data=average_data,
+                rest_window_size=rest_ws,
+                init_window_task=init_window,
+                task_window_size=task_ws,
+                average_data=average_data,
                 shuffle_rest=shuffle,
                 filtering=filtering,
                 decomposition=decomposition,
                 filter_order=10,
                 filter_cut_off=0.09,
-                flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING
             )
-            del fm
             rest_s += 1
             rest_e += 1
             print(rest_ws)
@@ -183,9 +163,7 @@ def snr_measurement(**kwargs):
             while rest_e < 19:
                 rest_ws = rest_s, rest_e
                 for roi in rois:
-                    fm = FlowManager()
-                    fm.execute(
-                        DataType.FMRI,
+                    snr.run(
                         roi=roi,
                         rest_ws=rest_ws,
                         init_window=init_window,
@@ -198,14 +176,9 @@ def snr_measurement(**kwargs):
                         movie_distances=True,
                         movie_activation=False,
                         shuffle_rest=False,
-                        flow_type=FlowType.SNR_MEASUREMENTS
-                        )
-                del fm
+                    )
                 rest_s += 1
                 rest_e += 1
-
-
-
 
             print('done group i', group_index)
         print('done window', init_window)
@@ -227,7 +200,7 @@ if __name__ == '__main__':
     # activations_pattern_for_specific_roi('RH_Default_pCunPCC_6', group='_GROUP2', with_plot=True)
     # activations_pattern_for_all_roi(group='', with_plot=True)
     # singular_relational_coding_for_specific_roi('RH_Default_pCunPCC_6', group='')
-    # custom_temporal_relational_coding_for_specific_roi(roi='RH_Vis_18',rest_ws=(8, 13), task_ws=10, with_plot=False)
+    # custom_temporal_relational_coding_for_specific_roi(roi='RH_Vis_18', rest_ws=(8, 13), task_ws=10, with_plot=False)
     # custom_temporal_relational_coding(rest_ws=(6, 16), task_ws=10, with_plot=True)
     # moving_window_custom_temporal_relational_coding(with_plot=True)
 
