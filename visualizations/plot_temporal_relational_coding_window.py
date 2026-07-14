@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import config
+import settings
 from data_center.static_data.static_data import StaticData
 
 plt.rcParams["figure.figsize"] = (20,10)
@@ -13,11 +13,11 @@ plt.rcParams["font.size"] = 20
 
 def window_average_rc_bar_plot(avg_data, with_shuffle=False, save_img=None):
     if avg_data:
-        results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG
-        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES
+        results_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG
+        figure_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES
     else:
-        results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS
-        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES
+        results_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS
+        figure_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES
 
     n_windows = 14
     n_subjects = 176
@@ -44,7 +44,7 @@ def window_average_rc_bar_plot(avg_data, with_shuffle=False, save_img=None):
     if with_shuffle and avg_data:
         roi_section['shuffle'] = {}
         for roi in StaticData.ROI_NAMES:
-            res_path = os.path.join(config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl")
+            res_path = os.path.join(settings.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl")
             data = pd.read_pickle(res_path)
             mean_rc = np.mean(data['avg'])
             roi_section['shuffle'][roi] = mean_rc
@@ -86,20 +86,20 @@ def window_relational_coding_plot(task_window, mode=None, **kwargs):
         StaticData.inhabit_class_members()
 
     if kwargs.get('avg_data'):
-        results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG
-        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES.format(task_window=task_window)
+        results_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_AVG
+        figure_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_AVG_FIGURES.format(task_window=task_window)
 
     elif mode=='pca':
-        results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA
-        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA_FIGURES.format(task_window=task_window)
+        results_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA
+        figure_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA_FIGURES.format(task_window=task_window)
 
     elif mode =='filtering':
-        results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING
-        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING_FIGURES.format(task_window=task_window)
+        results_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING
+        figure_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING_FIGURES.format(task_window=task_window)
 
     else:
-        results_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS
-        figure_path = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES.format(task_window=task_window)
+        results_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS
+        figure_path = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_WINDOW_RESULTS_FIGURES.format(task_window=task_window)
     task_range = 10
     w_s = 0
     w_e = 5

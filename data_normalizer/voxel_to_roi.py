@@ -4,7 +4,7 @@ from typing import Optional
 
 import pandas as pd
 
-import config
+import settings
 import data_normalizer.utils as utils
 from enums import Mode
 
@@ -24,13 +24,13 @@ class Voxel2Roi:
             network_mapping: maps ROI index to its sub network name.
             voxel_mapping: maps voxels to ROI index.
         """
-        self.network_mapping = pd.read_csv(os.path.join(config.MAPPING_FILES,
-                                                        config.NETWORK_MAPPING_TEMPLATE_FILE.format(roi=roi,
+        self.network_mapping = pd.read_csv(os.path.join(settings.MAPPING_FILES,
+                                                        settings.NETWORK_MAPPING_TEMPLATE_FILE.format(roi=roi,
                                                                                                     nw=nw,
                                                                                                     mm=mm)))
 
-        self.voxel_mapping = pd.read_csv(os.path.join(config.MAPPING_FILES,
-                                                      config.VOXEL_MAPPING_FILE.format(roi=roi, nw=nw)))
+        self.voxel_mapping = pd.read_csv(os.path.join(settings.MAPPING_FILES,
+                                                      settings.VOXEL_MAPPING_FILE.format(roi=roi, nw=nw)))
         self.voxel_mapping['ROI'].astype(int)
 
     def _get_voxels_by_roi(self, data: pd.DataFrame, roi: str):

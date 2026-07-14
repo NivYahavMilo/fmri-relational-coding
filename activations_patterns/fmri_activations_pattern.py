@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-import config
+import settings
 import data_normalizer.utils as utils
 from activations_patterns.base_activations_pattern import BaseActivationPattern
 from enums import Mode
@@ -48,7 +48,7 @@ class FmriActivationPattern(BaseActivationPattern):
 
     def run(self, roi: str, *args, **kwargs):
         group = kwargs.get('group', '')
-        save_path = os.path.join(config.FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG.format(group=group.lower()), f"{roi}.pkl")
+        save_path = os.path.join(settings.FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG.format(group=group.lower()), f"{roi}.pkl")
         if os.path.isfile(save_path):
             return
         self.avg_data_flow(roi, save_path, group)

@@ -1,6 +1,6 @@
 from typing import List, Callable, Union
 
-import config
+import settings
 from data_center.static_data.static_data import StaticData
 from enums import Mode, FlowType, ScanningMode
 from flow_manager import FlowManager
@@ -19,7 +19,7 @@ def convert_raw_data(*args, **kwargs):
     - k_roi=300
     - k_net=7
     - z_score=False
-    - save_path=config.VOXEL_DATA_DENORMALIZED
+    - save_path=settings.VOXEL_DATA_DENORMALIZED
     - flow_type=FlowType.RAW_TO_TABULAR
     """
 
@@ -31,7 +31,7 @@ def convert_raw_data(*args, **kwargs):
         k_roi=300,
         k_net=7,
         z_score=False,
-        save_path=config.VOXEL_DATA_DENORMALIZED,
+        save_path=settings.VOXEL_DATA_DENORMALIZED,
         flow_type=FlowType.RAW_TO_TABULAR
     )
 
@@ -42,15 +42,15 @@ def extract_voxel_from_raw_data(mode: Mode, **kwargs):
 
     This function uses FlowManager to execute the voxel extraction process from raw data.
     It executes the process in three modes: REST, CLIPS, and FIRST_REST_SECTION.
-    The resulting voxel data is saved in the config.VOXEL_DATA_DF_DENORMALIZED path.
+    The resulting voxel data is saved in the settings.VOXEL_DATA_DF_DENORMALIZED path.
     """
     scanning_mode: ScanningMode = kwargs.pop('scanning_mode')
     fm = FlowManager()
     fm.execute(
         mode,
         scanning_mode=scanning_mode,
-        save_path=config.VOXEL_DATA_DF_DENORMALIZED,
-        raw_data_path=config.VOXEL_DATA_DENORMALIZED,
+        save_path=settings.VOXEL_DATA_DF_DENORMALIZED,
+        raw_data_path=settings.VOXEL_DATA_DENORMALIZED,
         flow_type=FlowType.VOXEL_EXTRACTION
     )
 
@@ -61,13 +61,13 @@ def map_voxel_level_data_to_roi(mode: Mode, **kwargs):
 
     This function uses FlowManager to execute the mapping process from voxel-level data to ROI.
     It executes the process in two modes: REST and CLIPS.
-    The resulting ROI data is saved in the config.SUBNET_DATA_DF_DENORMALIZED path.
+    The resulting ROI data is saved in the settings.SUBNET_DATA_DF_DENORMALIZED path.
     """
     fm = FlowManager()
     fm.execute(
         mode,
-        load_path=config.VOXEL_DATA_DF_DENORMALIZED,
-        save_path=config.SUBNET_DATA_DF_DENORMALIZED,
+        load_path=settings.VOXEL_DATA_DF_DENORMALIZED,
+        save_path=settings.SUBNET_DATA_DF_DENORMALIZED,
         flow_type=FlowType.VOXEL_TO_ROI
     )
 
@@ -76,8 +76,8 @@ def map_rois_to_network(mode: Mode, **kwargs):
     fm = FlowManager()
     fm.execute(
         mode,
-        load_path=config.NETWORK_DATA_DF_DENORMALIZED,
-        save_path=config.NETWORK_SUBNET_DATA_DF_DENORMALIZED,
+        load_path=settings.NETWORK_DATA_DF_DENORMALIZED,
+        save_path=settings.NETWORK_SUBNET_DATA_DF_DENORMALIZED,
         flow_type=FlowType.ROI_TO_NETWORK
     )
 

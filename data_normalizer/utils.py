@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 import pandas as pd
 
-import config
+import settings
 
 
 def info(s: str):
@@ -20,7 +20,7 @@ def get_parcel(roi, net=7):
     parcel: grayordinate -> ROI map
     nw_info: subnetwork tags for each ROI
     """
-    parcel_path = os.path.join(config.DATA_DRIVE_E, 'cifti',
+    parcel_path = os.path.join(settings.DATA_DRIVE_E, 'cifti',
                                'Schaefer2018_%dParcels_%dNetworks_order.csv' % (roi, net))
 
     df = pd.read_csv(parcel_path)

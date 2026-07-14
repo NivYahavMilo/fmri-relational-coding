@@ -3,7 +3,7 @@ from abc import abstractmethod
 
 import pandas as pd
 
-import config
+import settings
 from data_center.static_data.static_data import StaticData
 from enums import Mode
 
@@ -54,7 +54,7 @@ class BaseActivationPattern:
     def load_avg_data(self, roi_name: str, mode: Mode, group: int):
         self._check_roi_validity(roi_name)
         # if pass validity checks
-        data_path = config.SUBNET_DATA_AVG.format(mode=mode.value, group=group)
+        data_path = settings.SUBNET_DATA_AVG.format(mode=mode.value, group=group)
         roi_data_p = os.path.join(data_path, f"{roi_name}.pkl")
         roi_data_df = pd.read_pickle(roi_data_p)
         return roi_data_df
@@ -68,7 +68,7 @@ class BaseActivationPattern:
     def load_group_data(roi, mode, **kwargs):
         group_index = kwargs.pop('group_index')
         n_subjects = kwargs.pop('n_subjects')
-        group_path = config.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=group_index)
+        group_path = settings.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=group_index)
         roi_path = os.path.join(group_path, f'{roi}.pkl')
         df = pd.read_pickle(roi_path)
         return df

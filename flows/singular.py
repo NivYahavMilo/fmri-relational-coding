@@ -1,7 +1,7 @@
 """Singular relational coding: task end-TR vs averaged rest per clip (was SingularRelationalCoding)."""
 import os
 
-import config
+import settings
 import data_access
 import rc_core
 from data_normalizer import utils
@@ -9,7 +9,7 @@ from enums import Mode
 
 
 def run(roi, group=''):
-    save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS, f"{roi}.pkl")
+    save_path = os.path.join(settings.FMRI_RELATION_CODING_RESULTS, f"{roi}.pkl")
     if os.path.isfile(save_path):
         return
     data = {}

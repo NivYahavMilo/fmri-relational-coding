@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import config
+import settings
 import data_normalizer.utils as utils
 from data_center.static_data.static_data import StaticData
 
 
 def custom_window_rc_histogram(roi, rest_window, task_window):
-    output_dir = config.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(range=f'task_{task_window}_rest{rest_window[0]}-{rest_window[1]}')
+    output_dir = settings.FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS.format(range=f'task_{task_window}_rest{rest_window[0]}-{rest_window[1]}')
     res_path = os.path.join(output_dir, f"{roi}.pkl")
     data = pd.read_pickle(res_path)
     rc_values = pd.Series(list(data.values()))
@@ -44,18 +44,18 @@ def plot_error_bar(data, roi, group='', save_img=None):
 
 
 def plot_pipe_avg(roi_name, group: str = '', shuffle=False):
-    res_path = config.FMRI_RELATION_CODING_RESULTS_AVG.format(group=group.lower())
+    res_path = settings.FMRI_RELATION_CODING_RESULTS_AVG.format(group=group.lower())
     if shuffle:
-        res_path = config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS
+        res_path = settings.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS
     data = utils.load_pkl(f"{res_path}\\{roi_name}.pkl")
-    save_img = os.path.join(config.FMRI_RELATION_CODING_RESULTS_FIGURES.format(group=group), f'{roi_name}.png')
+    save_img = os.path.join(settings.FMRI_RELATION_CODING_RESULTS_FIGURES.format(group=group), f'{roi_name}.png')
     if shuffle:
-        save_img = os.path.join(config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS_FIGURES, f'{roi_name}.png')
+        save_img = os.path.join(settings.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS_FIGURES, f'{roi_name}.png')
     plot_error_bar(data['avg'], roi_name, group, save_img)
 
 
 def gather_subjects_results(roi_name, path=None):
-    res_path = config.FMRI_RELATION_CODING_RESULTS
+    res_path = settings.FMRI_RELATION_CODING_RESULTS
     if path:
         res_path = path
     data = utils.load_pkl(f"{res_path}\\{roi_name}.pkl")
@@ -68,15 +68,15 @@ def gather_subjects_results(roi_name, path=None):
 
 
 def plot_pipe(roi):
-    rc_mat = gather_subjects_results(roi, path=config.ISFC_RELATIONAL_CODING_RESULTS)
+    rc_mat = gather_subjects_results(roi, path=settings.ISFC_RELATIONAL_CODING_RESULTS)
     rc_stats = {}
     rc_stats['mean'] = np.mean(rc_mat, axis=0)
     rc_stats['std'] = np.std(rc_mat, axis=0, ddof=1) // np.sqrt(rc_mat.shape[0])
-    plot_error_bar(rc_stats, roi, save_img=config.ISFC_RELATIONAL_CODING_RESULTS_FIGURES)
+    plot_error_bar(rc_stats, roi, save_img=settings.ISFC_RELATIONAL_CODING_RESULTS_FIGURES)
 
 
 def plot_pipe_single_subject(roi, subject):
-    res_path = config.FMRI_RELATION_CODING_RESULTS
+    res_path = settings.FMRI_RELATION_CODING_RESULTS
     data = utils.load_pkl(f"{res_path}\\{roi}.pkl")
     sub_data = data[subject]
     plt.plot(sub_data)
@@ -89,7 +89,7 @@ def plot_pipe_single_subject(roi, subject):
 def plot_reg_and_avg_on_top():
     StaticData.inhabit_class_members()
     for roi in StaticData.ROI_NAMES:
-        avg_path = config.FMRI_RELATION_CODING_RESULTS_AVG
+        avg_path = settings.FMRI_RELATION_CODING_RESULTS_AVG
         data_avg = utils.load_pkl(f"{avg_path}\\{roi}.pkl")
         data_avg['mean'] = data_avg.pop('avg')
 
@@ -132,7 +132,7 @@ def plot_reg_and_avg_on_top():
         plt.title(f"Mean and Standard deviation of {roi}")
         plt.xlabel("Rest TR")
         plt.ylabel("Correlation Value")
-        save_path = fr"{config.FMRI_RELATION_CODING_RESULTS_FIGURES}\\{roi}.png"
+        save_path = fr"{settings.FMRI_RELATION_CODING_RESULTS_FIGURES}\\{roi}.png"
         if os.path.isfile(save_path):
             continue
         fig1 = plt.gcf()
@@ -156,7 +156,7 @@ def _get_clip_avg(data, roi, group):
 
 
 def plot_activation_pattern(roi, group, avg=True):
-    avg_path = config.FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG.format(group=group)
+    avg_path = settings.FMRI_ACTIVATIONS_PATTERN_RESULTS_AVG.format(group=group)
     data = utils.load_pkl(f"{avg_path}\\{roi}.pkl")
     clips = {}
     for tr, clip_d in data.items():
@@ -193,7 +193,7 @@ def plot_activation_pattern(roi, group, avg=True):
     plt.title(f"Mean and Standard deviation of {roi}")
     plt.xlabel("Rest TR")
     plt.ylabel("Correlation Value")
-    save_path = fr"{config.FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES.format(group=group.lower())}\\{roi}.png"
+    save_path = fr"{settings.FMRI_ACTIVATIONS_PATTERN_RESULTS_FIGURES.format(group=group.lower())}\\{roi}.png"
     # plt.show()
     fig1 = plt.gcf()
     # plt.show()

@@ -1,7 +1,7 @@
 """Per-subject / averaged relational coding across the rest timepoints (was FmriRelationalCoding)."""
 import os
 
-import config
+import settings
 import data_access
 import data_normalizer.utils as utils
 import rc_core
@@ -51,16 +51,16 @@ def _subject_flow(roi, res_path, shuffle):
 
 def run(roi, avg_data=False, group='', shuffle=False):
     if avg_data:
-        save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS_AVG.format(group=group.lower()), f"{roi}.pkl")
+        save_path = os.path.join(settings.FMRI_RELATION_CODING_RESULTS_AVG.format(group=group.lower()), f"{roi}.pkl")
         if shuffle:
-            save_path = os.path.join(config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl")
+            save_path = os.path.join(settings.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl")
             if os.path.isfile(save_path):
                 return
         _avg_data_flow(roi, save_path, group, shuffle)
     else:
-        save_path = os.path.join(config.FMRI_RELATION_CODING_RESULTS, f"{roi}.pkl")
+        save_path = os.path.join(settings.FMRI_RELATION_CODING_RESULTS, f"{roi}.pkl")
         if shuffle:
-            save_path = os.path.join(config.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl")
+            save_path = os.path.join(settings.FMRI_RELATION_CODING_SHUFFLE_REST_RESULTS, f"{roi}.pkl")
             if os.path.isfile(save_path):
                 return
         _subject_flow(roi, save_path, shuffle)

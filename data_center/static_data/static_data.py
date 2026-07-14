@@ -2,7 +2,7 @@ import json
 import os
 from typing import List, Optional, Dict
 
-import config
+import settings
 
 class StaticData:
     ROI_NAMES: Optional[List]
@@ -17,7 +17,7 @@ class StaticData:
         load json file
         set class attr
         """
-        data_path = os.path.join(config.STATIC_DATA_PATH, 'static_data.json')
+        data_path = os.path.join(settings.STATIC_DATA_PATH, 'static_data.json')
         io = open(data_path)
         data = json.load(io)
 

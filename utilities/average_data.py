@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 
-import config
+import settings
 from arithmetic_operations.matrix_op import MatrixOperations
 from data_center.static_data.static_data import StaticData
 from data_normalizer import utils
@@ -13,7 +13,7 @@ StaticData.inhabit_class_members()
 
 
 def _load(sub, roi, mode):
-    data_path = config.SUBNET_DATA_DF.format(mode=mode.value)
+    data_path = settings.SUBNET_DATA_DF.format(mode=mode.value)
     roi_data_p = os.path.join(data_path, sub, f'{roi}.pkl')
     roi_data_df = pd.read_pickle(roi_data_p)
     return roi_data_df
@@ -23,9 +23,9 @@ def get_subjects_average_roi_matrix():
     # mid_i = len(StaticData.SUBJECTS) // 2
 
     for roi in StaticData.ROI_NAMES:
-        save_path_rest = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.RESTING_STATE_REST.value,
+        save_path_rest = os.path.join(settings.SUBNET_DATA_AVG.format(mode=Mode.RESTING_STATE_REST.value,
                                                                     group=''), f'{roi}')
-        save_path_task = os.path.join(config.SUBNET_DATA_AVG.format(mode=Mode.RESTING_STATE_TASK.value,
+        save_path_task = os.path.join(settings.SUBNET_DATA_AVG.format(mode=Mode.RESTING_STATE_TASK.value,
                                                                     group=''), f'{roi}')
         task = []
         rest = []
@@ -64,7 +64,7 @@ def get_average_data_leave_one_out():
                 df_values = df.drop(['timepoint', 'Subject', 'y'], axis=1)
                 rest_subject_data.append(df_values.values)
 
-            save_path = os.path.join(config.SUBJECTS_AVG_DATA_LEAVE_ONE_OUT, subject)
+            save_path = os.path.join(settings.SUBJECTS_AVG_DATA_LEAVE_ONE_OUT, subject)
             if not os.path.exists(save_path):
                 os.mkdir(save_path)
 
@@ -81,7 +81,7 @@ def get_average_data_leave_one_out():
 def get_avg_data_by_n_subject(n_subjects: int, mode: Mode, participants: list):
     for idx, group in enumerate(participants, 1):
 
-        group_path = config.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=idx)
+        group_path = settings.SUBNET_AVG_N_SUBJECTS.format(mode=mode.value, n_subjects=n_subjects, group_i=idx)
         if not os.path.exists(group_path):
             os.makedirs(group_path)
 
@@ -109,7 +109,7 @@ def iterate_subjects_group():
     group = 30
     # subjects_list = StaticData.SUBJECTS.copy()
     resting_state_subjects = StaticData.SUBJECTS.copy()
-    chunk = np.ceil(config.K_SUBJECTS / group)
+    chunk = np.ceil(settings.K_SUBJECTS / group)
     chunks = np.array_split(resting_state_subjects, chunk)
     get_avg_data_by_n_subject(n_subjects=group, mode=Mode.RESTING_STATE_TASK, participants=chunks)
     get_avg_data_by_n_subject(n_subjects=group, mode=Mode.RESTING_STATE_REST, participants=chunks)

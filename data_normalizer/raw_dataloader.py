@@ -11,7 +11,7 @@ from glob import glob
 import nibabel as nib
 import numpy as np
 
-import config
+import settings
 import data_normalizer.utils as utils
 from enums import ScanningMode
 
@@ -55,8 +55,8 @@ class ParcelData:
             ts = cls._zscore_ts(ts)  # time x grayordinate
         t = ts.shape[0]
 
-        roi_ts = np.zeros((t, config.K_GRAYORIDNATES))
-        for ii in range(config.K_GRAYORIDNATES):
+        roi_ts = np.zeros((t, settings.K_GRAYORIDNATES))
+        for ii in range(settings.K_GRAYORIDNATES):
             roi_ts[:, ii] = ts[:, ii]
 
         return roi_ts
@@ -73,7 +73,7 @@ class ParcelData:
 
         # use glob to get all files with `ext`
         ext = '*MSMAll_hp2000_clean.dtseries.nii'
-        files = [y for x in os.walk(config.RAW_DATA.format(scanning_mode=scan_mode.value))
+        files = [y for x in os.walk(settings.RAW_DATA.format(scanning_mode=scan_mode.value))
                  for y in glob(os.path.join(x[0], ext))]
 
         # get list of participants
@@ -104,7 +104,7 @@ class ParcelData:
                 pad zeros
                 (time x roi x number of runs)
                 '''
-                save_ts = np.zeros((k_time, config.K_GRAYORIDNATES, 4))
+                save_ts = np.zeros((k_time, settings.K_GRAYORIDNATES, 4))
                 for run in range(4):
                     run_ts = ID_ts[run]
                     t = run_ts.shape[0]
@@ -116,7 +116,7 @@ class ParcelData:
                     os.makedirs(SAVE_DIR)
 
                 save_path = os.path.join(SAVE_DIR,
-                                         'data_4_runs_voxel_%d_ts_subject_%s.pkl' % (config.K_GRAYORIDNATES, ID))
+                                         'data_4_runs_voxel_%d_ts_subject_%s.pkl' % (settings.K_GRAYORIDNATES, ID))
                 with open(save_path, 'wb') as f:
                     pickle.dump(data, f)
                 del data, save_ts

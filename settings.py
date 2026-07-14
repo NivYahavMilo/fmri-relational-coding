@@ -1,5 +1,14 @@
 import os
 
+# Load a local .env (if present) before reading any RC_* overrides below.
+# python-dotenv is optional: without it, plain environment variables still work.
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
+
 """ Repository paths """
 ROOT_PATH = os.path.abspath(os.path.curdir)
 DATA_CENTER = os.path.join(ROOT_PATH, 'data_center')
