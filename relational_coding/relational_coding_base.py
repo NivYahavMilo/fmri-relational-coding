@@ -70,9 +70,15 @@ class RelationalCodingBase:
         return StaticData.CLIP_MAPPING.get(str(i))
 
     @staticmethod
-    def get_single_tr_vector(data: pd.DataFrame, clip_i: int, timepoint: int = -1):
-        drop_columns = []
+    def _drop_metadata_columns(df: pd.DataFrame) -> pd.DataFrame:
+        """Return `df` without the non-voxel metadata columns (y, timepoint, and Subject if present)."""
+        drop_columns = ['y', 'timepoint']
+        if 'Subject' in df.columns:
+            drop_columns.append('Subject')
+        return df.drop(drop_columns, axis=1)
 
+    @staticmethod
+    def get_single_tr_vector(data: pd.DataFrame, clip_i: int, timepoint: int = -1):
         if timepoint == -1:
             xdf = data[data['y'] == clip_i]
             timepoint = int(max(xdf['timepoint'].values))
@@ -80,11 +86,7 @@ class RelationalCodingBase:
         sequence = data[(data['timepoint'] == timepoint) &
                         (data['y'] == clip_i)]
 
-        if 'Subject' in sequence.columns:
-            drop_columns.append('Subject')
-        drop_columns.extend(['y', 'timepoint'])
-
-        sequence = sequence.drop(drop_columns, axis=1)
+        sequence = RelationalCodingBase._drop_metadata_columns(sequence)
 
         return sequence.values[0].tolist()
 
