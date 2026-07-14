@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 import config
-from arithmetic_operations.correlation_and_standartization import z_score
+from arithmetic_operations.correlation_and_standardization import z_score
 from data_center.static_data.static_data import StaticData
 from enums import Mode
 

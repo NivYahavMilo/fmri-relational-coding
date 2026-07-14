@@ -1,8 +1,8 @@
-"""arithmetic_operations.correlation_and_standartization — z-score, pearson_correlation, ssmd."""
+"""arithmetic_operations.correlation_and_standardization — z-score, pearson_correlation, ssmd."""
 import numpy as np
 import pandas as pd
 
-from arithmetic_operations.correlation_and_standartization import (
+from arithmetic_operations.correlation_and_standardization import (
     pearson_correlation,
     ssmd,
     z_score,

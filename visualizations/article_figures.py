@@ -7,10 +7,10 @@ import pandas as pd
 import seaborn as sns
 
 import config
-from arithmetic_operations.correlation_and_standartization import ssmd
+from arithmetic_operations.correlation_and_standardization import ssmd
 from data_center.static_data.static_data import StaticData
 from enums import AnalysisType
-from visualizations.viusalization_utils import gather_dynamic_correlation_by_window, RESULTS_DIR
+from visualizations.visualization_utils import gather_dynamic_correlation_by_window, RESULTS_DIR
 
 StaticData.inhabit_class_members()
 
