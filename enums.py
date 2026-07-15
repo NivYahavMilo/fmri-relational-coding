@@ -26,23 +26,13 @@ class Network(Enum):
     Frontoparietal = 'Cont'
 
 
-class DataType(Enum):
-    FMRI = 'fMRI'
-    ACTIVATIONS = 'LSTM PATTERNS'
-
-
 class FlowType(Enum):
+    # Preprocessing pipeline steps (see utilities/raw_data_converting_utils.py).
+    # Analysis flows are no longer dispatched via enums — call flows.<analysis>.run(...).
     ROI_TO_NETWORK = auto()
     VOXEL_TO_ROI = auto()
     RAW_TO_TABULAR = auto()
     VOXEL_EXTRACTION = auto()
-    RELATIONAL_CODING = auto()
-    ACTIVATIONS_PATTERNS = auto()
-    SINGULAR_RELATIONAL_CODING = auto()
-    CUSTOM_TEMPORAL_RELATIONAL_CODING = auto()
-    ISFC_RELATIONAL_CODING = auto()
-    SNR_MEASUREMENTS = auto()
-    CONCATENATED_FMRI = auto()
 
 
 class AnalysisType(Enum):
