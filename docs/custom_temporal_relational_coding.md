@@ -4,6 +4,17 @@ Detailed reference for the moving-window relational coding experiment that probe
 
 ---
 
+> **Architecture note.** This write-up predates the "flatten-flows" refactor. The
+> algorithm is unchanged, but the class hierarchy under
+> `relational_coding/custom_temporal_relational_coding/` dispatched through
+> `FlowManager` has been replaced by plain functions: shared algorithms (including
+> `custom_temporal_relational_coding` and `correlate_current_timepoint`) live in
+> `rc_core.py`, data loaders in `data_access.py`, and the per-analysis orchestration
+> in `flows/custom_temporal.py`, `flows/snr.py`, and `flows/concat.py` (each a
+> top-level `run(...)`). Paths come from `settings.py`. References below to
+> `FlowManager`, `CustomTemporalRelationalCoding(Utils)`, `RelationalCodingBase`, or
+> `config` map onto these.
+
 ## Code Map
 
 - Driver helpers (looping over ROIs, window grids, filtering combos): `main.py`
@@ -11,57 +22,31 @@ Detailed reference for the moving-window relational coding experiment that probe
   - `custom_temporal_relational_coding`
   - `moving_window_custom_temporal_relational_coding`
   - `moving_window_custom_temporal_relational_coding_with_signal_processing`
-- Execution dispatcher: `flow_manager.py::FlowManager._custom_temporal_relational_coding`
-- Core algorithm: `relational_coding/custom_temporal_relational_coding/custom_temporal_relational_coding.py`
-- Shared utilities and window logic: `relational_coding/custom_temporal_relational_coding/custom_temporal_rc_utils.py`
-- Base correlation operations and I/O helpers: `relational_coding/relational_coding_base.py`
+  - or the CLI: `python -m cli custom-temporal ...` / `moving-window ...` / `moving-window-sp ...`
+- Analysis module: `flows/custom_temporal.py::run` (subject vs. averaged flow)
+- Core algorithm + window logic: `rc_core.py` (`custom_temporal_relational_coding`, `get_task_window_slides_vectors`, `get_rest_window_slides_vectors`, `correlate_current_timepoint`)
+- Data loaders: `data_access.py`
 
 Representative snippets:
 
-```64:112:main.py
-def moving_window_custom_temporal_relational_coding(**kwargs):
-    ...
-    fm.execute(
-        DataType.FMRI,
-        roi,
-        rest_ws,
-        init_window,
-        task_ws,
-        flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING,
-        **kwargs
-    )
+```60:69:flows/custom_temporal.py
+def run(roi, **kwargs):
+    init_window_task = kwargs.pop('init_window_task')
+    ws_task = kwargs.pop('task_window_size')
+    ws_rest = kwargs.pop('rest_window_size')
+    avg_data = kwargs.pop('average_data', False)
+    if avg_data:
+        _avg_flow(roi=roi, init_window_task=init_window_task, ws_task=ws_task, ws_rest=ws_rest, **kwargs)
+        return
+    _subject_flow(roi=roi, init_window_task=init_window_task, ws_task=ws_task, ws_rest=ws_rest, **kwargs)
 ```
 
-```76:109:flow_manager.py
-class FlowManager:
+```rc_core.py
+def custom_temporal_relational_coding(*, data_task, data_rest, window_size_rest,
+                                      init_window_task, window_size_task, **kwargs):
     ...
-    def _custom_temporal_relational_coding(cls, *args, **kwargs):
-        ...
-        custom_temporal_rc.run(
-            roi=roi_name,
-            rest_window_size=rest_window_size,
-            init_window_task=init_window_task,
-            task_window_size=task_window_size,
-            **kwargs
-        )
-```
-
-```1:109:relational_coding/custom_temporal_relational_coding/custom_temporal_relational_coding.py
-class CustomTemporalRelationalCoding(CustomTemporalRelationalCodingUtils):
+    rc_distance, _ = correlate_current_timepoint(data=custom_temporal_window_vec, **kwargs)
     ...
-    def run(...):
-        if avg_data:
-            self.__avg_flow(...)
-        else:
-            self.__subject_flow(...)
-```
-
-```22:142:relational_coding/custom_temporal_relational_coding/custom_temporal_rc_utils.py
-class CustomTemporalRelationalCodingUtils(RelationalCodingBase):
-    def custom_temporal_relational_coding(...):
-        ...
-        rc_distance, _ = self.correlate_current_timepoint(data=custom_temporal_window_vec, **kwargs)
-        ...
 ```
 
 ---
@@ -146,7 +131,7 @@ Because each subject produces one vector per clip (already averaged across windo
 
 ### 5. Persistence and Artifacts
 
-- Outputs live under directories configured in `config.py`:
+- Outputs live under directories configured in `settings.py`:
   - `FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS`
   - `FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_FILTERING`
   - `FMRI_CUSTOM_TEMPORAL_RELATION_CODING_RESULTS_PCA`
@@ -162,8 +147,8 @@ Because each subject produces one vector per clip (already averaged across windo
 | --- | --- | --- |
 | **Filtering** | Pass `filtering=True`, `filter_order`, `filter_cut_off`; default example in `moving_window_custom_temporal_relational_coding_with_signal_processing`. | Results stored under `custom_temporal_relational_coding_filtering/...`. |
 | **PCA Reduction** | Set `decomposition=True`; optionally adjust `n_components` fraction in `Decomposition.reduce_dimensions`. | Saved under `custom_temporal_relational_coding_pca/...`. |
-| **SNR Measurements** | Uses group-averaged data via `load_group_subjects`, sets `skip_correlation=False` but records intermediate features for distance analyses. See `relational_coding/custom_temporal_relational_coding/snr_measurements.py`. | Results under `MOVIE_DISTANCES_CORRELATION_ANALYSIS/...`. |
-| **Concatenated Task Clips** | `custom_temporal_relational_coding/concat_fmri_clips.py` reuses the same utilities but concatenates multiple clips before averaging. | Stored under the concat-specific result directories in `config`. |
+| **SNR Measurements** | Uses group-averaged data via `load_group_subjects`, sets `skip_correlation=False` but records intermediate features for distance analyses. See `flows/snr.py`. | Results under `MOVIE_DISTANCES_CORRELATION_ANALYSIS/...`. |
+| **Concatenated Task Clips** | `flows/concat.py` reuses the same `rc_core` functions but concatenates multiple clips before averaging. | Stored under the concat-specific result directories in `settings`. |
 
 ---
 
@@ -172,19 +157,20 @@ Because each subject produces one vector per clip (already averaged across windo
 ### Single ROI, Default Windows
 
 ```python
-from enums import DataType, FlowType
-from flow_manager import FlowManager
+import flows.custom_temporal as custom_temporal
 
-FlowManager().execute(
-    DataType.FMRI,
+custom_temporal.run(
     'RH_Vis_18',
-    (8, 13),          # rest_window_size → TR 8–12
-    'end',            # init_window_task
-    10,               # task_window_size
+    rest_window_size=(8, 13),   # TR 8–12
+    init_window_task='end',
+    task_window_size=10,
     average_data=False,
     shuffle_rest=False,
-    flow_type=FlowType.CUSTOM_TEMPORAL_RELATIONAL_CODING
 )
+```
+Equivalently from the CLI:
+```bash
+python -m cli custom-temporal --roi RH_Vis_18 --rest-start 8 --rest-end 13 --task-ws 10
 ```
 
 ### Moving Window Sweep with Filtering

@@ -4,46 +4,41 @@ This document explains how the repository computes *relational coding* distances
 
 ---
 
+> **Architecture note.** This write-up predates the "flatten-flows" refactor. The
+> algorithm is unchanged, but the code now lives in plain functions and modules rather
+> than the old `relational_coding/` class hierarchy dispatched through `FlowManager`:
+> shared algorithms in `rc_core.py`, data loaders in `data_access.py`, and one module
+> per analysis under `flows/` (each exposing a top-level `run(...)`). Paths come from
+> `settings.py`. Mentions of `FlowManager._relational_coding`,
+> `FmriRelationalCoding`, `RelationalCodingBase`, or `config` below map onto these.
+
 ## Where the Code Lives
 
-- Entry point for batch execution: `main.py` (`relation_coding_for_all_roi`, `relation_coding_for_specific_roi`)
-- Flow dispatcher: `flow_manager.py::FlowManager._relational_coding`
-- Algorithm implementation: `relational_coding/fmri_relationl_coding.py::FmriRelationalCoding`
-- Shared utilities (data loading, correlation logic, filtering, etc.): `relational_coding/relational_coding_base.py`
+- Entry point for batch execution: `main.py` (`relation_coding_for_all_roi`, `relation_coding_for_specific_roi`) — or the CLI `python -m cli relational-coding ...`
+- Analysis module: `flows/fmri_relational_coding.py::run`
+- Shared algorithms (data prep, correlation logic, filtering, etc.): `rc_core.py`
+- Data loaders: `data_access.py` (`load_roi_data`, `load_avg_data`)
 
 Relevant excerpts:
 
-```19:130:flow_manager.py
-class FlowManager:
-    ...
-    def _relational_coding(cls, *args):
+```52:66:flows/fmri_relational_coding.py
+def run(roi, avg_data=False, group='', shuffle=False):
+    if avg_data:
         ...
-        relation_coding = relational_coding_mapping.get(relation_coding_type)()
-        relation_coding.run(roi=roi_name, avg_data=avg_flag, group=group, shuffle=shuffle)
+        _avg_data_flow(roi, save_path, group, shuffle)
+    else:
+        ...
+        _subject_flow(roi, save_path, shuffle)
 ```
 
-```1:82:relational_coding/fmri_relationl_coding.py
-class FmriRelationalCoding(RelationalCodingBase):
+```rc_core.py
+def correlate_current_timepoint(data, **kwargs):
     ...
-    def run(self, roi: str, *args, **kwargs):
-        avg_data = kwargs['avg_data']
-        group = kwargs['group']
-        shuffle_rest = kwargs['shuffle']
-        if avg_data:
-            self.avg_data_flow(...)
-        else:
-            self.subject_flow(...)
-```
-
-```1:128:relational_coding/relational_coding_base.py
-class RelationalCodingBase:
-    def correlate_current_timepoint(self, data, **kwargs):
-        ...
-        df_corr = df.corr()
-        rest_cor = df_corr.iloc[len(df_corr) // 2:, len(df_corr) // 2:]
-        clip_cor = df_corr.iloc[:len(df_corr) // 2, :len(df_corr) // 2]
-        ...
-        distance = round(tr_corr.loc['task'].at['rest'], 3)
+    df_corr = df.corr()
+    rest_cor = df_corr.iloc[len(df_corr) // 2:, len(df_corr) // 2:]
+    clip_cor = df_corr.iloc[:len(df_corr) // 2, :len(df_corr) // 2]
+    ...
+    distance = round(tr_corr.loc['task'].at['rest'], 3)
 ```
 
 ---
@@ -147,21 +142,21 @@ Typical dimensionalities:
    from data_center.static_data.static_data import StaticData
    StaticData.inhabit_class_members()
    ```
-2. Run the helper in `main.py` or call `FlowManager` directly. Examples:
+2. Run the helper in `main.py`, call the flow directly, or use the CLI. Examples:
    ```python
-   from enums import DataType, FlowType
-   from flow_manager import FlowManager
+   import flows.fmri_relational_coding as fmri_relational_coding
 
-   FlowManager().execute(
-       DataType.FMRI,
+   fmri_relational_coding.run(
        'RH_Default_pCunPCC_6',
-       False,        # avg_data
-       '',           # group suffix (unused when avg_data=False)
-       False,        # shuffle controls
-       flow_type=FlowType.RELATIONAL_CODING
+       avg_data=False,   # per-subject (True -> group average)
+       group='',         # group suffix (used only when avg_data=True)
+       shuffle=False,    # permutation control
    )
    ```
-3. Inspect outputs under the directories declared in `config.FMRI_RELATION_CODING_RESULTS*`.
+   ```bash
+   python -m cli relational-coding --roi RH_Default_pCunPCC_6
+   ```
+3. Inspect outputs under the directories declared in `settings.FMRI_RELATION_CODING_RESULTS*`.
 
 ---
 

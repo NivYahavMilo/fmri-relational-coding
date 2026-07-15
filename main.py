@@ -1,5 +1,4 @@
 import visualizations.plot_relational_coding as plot
-import visualizations.plot_snr_measurement as plot_snr
 import visualizations.plot_temporal_relational_coding_window as plot_window
 from activations_patterns.fmri_activations_pattern import FmriActivationPattern
 from data_center.static_data.static_data import StaticData
@@ -184,6 +183,7 @@ def snr_measurement(**kwargs):
         print('done window', init_window)
 
         if kwargs.get('plot'):
+            import visualizations.plot_snr_measurement as plot_snr
             plot_snr.plot_snr_measurement(
                 group_index,
                 save_figure=False,
@@ -194,44 +194,9 @@ def snr_measurement(**kwargs):
 
 
 if __name__ == '__main__':
-    # relation_coding_for_specific_roi()
-    # relation_coding_for_all_roi(avg_data=True, with_plot=True, group='_GROUP2')
-    # relation_coding_for_all_roi(avg_data=True, with_plot=True, group='_GROUP1')
-    # activations_pattern_for_specific_roi('RH_Default_pCunPCC_6', group='_GROUP2', with_plot=True)
-    # activations_pattern_for_all_roi(group='', with_plot=True)
-    # singular_relational_coding_for_specific_roi('RH_Default_pCunPCC_6', group='')
-    # custom_temporal_relational_coding_for_specific_roi(roi='RH_Vis_18', rest_ws=(8, 13), task_ws=10, with_plot=False)
-    # custom_temporal_relational_coding(rest_ws=(6, 16), task_ws=10, with_plot=True)
-    # moving_window_custom_temporal_relational_coding(with_plot=True)
+    # The launcher functions above are the library API. For command-line use,
+    # `flows/` analyses are exposed through the argparse CLI in cli.py:
+    #     python main.py <analysis> [options]      (equivalently: python -m cli ...)
+    from cli import run
 
-    # relation_coding_for_all_roi(avg_data=True, shuffle=True, with_plot=True)
-
-    # moving_window_custom_temporal_relational_coding(average_data=True, shuffle=True, with_plot=False, with_bar=False)
-    # moving_window_custom_temporal_relational_coding(average_data=False, shuffle=True, with_plot=False, with_bar=False)
-    # moving_window_custom_temporal_relational_coding_with_signal_processing(
-    #     roi='',
-    #     average_data=False,
-    #     shuffle=False,
-    #     filtering=False,
-    #     decomposition=True,
-    #     with_plot=True,
-    # )
-
-    # moving_window_custom_temporal_relational_coding_with_signal_processing(
-    #     roi='RH_Default_Temp_6',
-    #     average_data=False,
-    #     shuffle=False,
-    #     filtering=True,
-    #     decomposition=False,
-    #     with_plot=True
-    # )
-    # isfc_relational_coding(with_plot=1)
-    snr_measurement(roi='RH_DorsAttn_Post_2')
-    #     # activations_pattern_for_specific_roi(roi='RH_Default_pCunPCC_1', group='_GROUP2', with_plot=True)
-    moving_window_custom_temporal_relational_coding(
-        # roi=['RH_Default_pCunPCC_1', 'LH_Default_PFC_15', 'RH_Default_Par_1'],
-        average_data=True,
-        shuffle=False,
-        with_plot=True,
-        with_bar=False
-    )
+    run()
